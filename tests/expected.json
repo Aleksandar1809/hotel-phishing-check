@@ -1,0 +1,17 @@
+{
+  "settings": { "hotelName": "Grand Palm Hotel", "hotelDomain": "grandpalm.test" },
+  "emails": {
+    "p01-booking-payment.eml": { "verdict": "many", "signals": ["brand-display", "lookalike-extra", "mismatch-reply-to", "auth-dmarc", "content-payment", "content-suspension"], "absent": ["link-unrelated"], "firstHop": "203.0.113.24" },
+    "p02-guest-complaint.eml": { "verdict": "many", "signals": ["brand-display", "link-text-mismatch", "content-complaint-link"], "absent": ["auth-spf", "auth-dkim", "auth-dmarc"] },
+    "p03-clickfix.eml": { "verdict": "many", "signals": ["content-clickfix", "brand-subject", "auth-spf", "auth-dkim", "auth-dmarc"], "absent": ["brand-display"] },
+    "p04-lookalike-expedia.eml": { "verdict": "many", "signals": ["lookalike-typo", "brand-display"], "absent": ["auth-spf", "auth-dkim", "auth-dmarc"] },
+    "p05-swapped-agoda.eml": { "verdict": "many", "signals": ["lookalike-swap", "brand-display", "content-cancellation"], "absent": ["auth-dmarc"] },
+    "p06-german-hrs-ip.eml": { "verdict": "many", "signals": ["brand-display", "lookalike-extra", "link-ip", "link-punycode", "content-payment", "content-cancellation", "auth-spf", "auth-dkim", "auth-dmarc"], "absent": [], "firstHop": "203.0.113.9" },
+    "p07-invoice-attachment.eml": { "verdict": "many", "signals": ["attachment-risky", "attachment-password", "mismatch-reply-to", "mismatch-return-path", "auth-spf", "auth-dmarc"], "absent": ["brand-display"] },
+    "p08-gm-fraud.eml": { "verdict": "many", "signals": ["brand-display", "mismatch-reply-to", "content-payment"], "absent": ["auth-dmarc"] },
+    "l01-guest-inquiry.eml": { "verdict": "none", "signals": ["brand-subject"], "absent": ["brand-display", "link-unrelated", "auth-spf", "auth-dkim", "auth-dmarc"] },
+    "l02-supplier-order.eml": { "verdict": "none", "signals": [], "absent": ["link-unrelated", "mismatch-return-path", "brand-subject"], "firstHop": "203.0.113.61" },
+    "l03-internal-arrivals.eml": { "verdict": "none", "signals": [], "absent": ["brand-display", "brand-subject", "link-unrelated", "info-first-hop"] },
+    "l04-events-newsletter.eml": { "verdict": "none", "signals": [], "absent": ["link-unrelated", "mismatch-return-path", "auth-dmarc"] }
+  }
+}

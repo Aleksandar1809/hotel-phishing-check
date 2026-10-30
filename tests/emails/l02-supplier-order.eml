@@ -1,0 +1,18 @@
+Return-Path: <orders@linen-supply.example.com>
+Received: from smtp.linen-supply.example.com (smtp.linen-supply.example.com [203.0.113.61]) by mx1.grandpalm.test with ESMTPS id 5e2b; Wed, 21 Oct 2026 09:15:00 +0400
+Authentication-Results: mx1.grandpalm.test; spf=pass smtp.mailfrom=linen-supply.example.com; dkim=pass header.d=linen-supply.example.com; dmarc=pass (p=QUARANTINE) header.from=linen-supply.example.com
+From: "Linen Supply Co" <orders@linen-supply.example.com>
+To: housekeeping@grandpalm.test
+Subject: Order 5521 dispatched
+Date: Wed, 21 Oct 2026 08:14:52 +0300
+Message-ID: <e5e2b@linen-supply.example.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Hello Housekeeping team,
+
+Your order 5521 (120 bath towels, 80 pillow cases) was dispatched today and will arrive on Friday.
+You can follow the delivery here: https://linen-supply.example.com/orders/5521/tracking
+
+Best regards,
+Linen Supply Co

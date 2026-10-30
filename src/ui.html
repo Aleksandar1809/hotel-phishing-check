@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Hotel Phishing Check</title>
+<style>
+  :root {
+    --bg: #f6f5f2; --card: #ffffff; --ink: #1d2327; --muted: #5d676e; --line: #dcdcd6;
+    --accent: #1f5f8b; --accent-ink: #ffffff;
+    --red: #c62828; --amber: #e0a100; --calm: #4f7f86;
+    --red-bg: #fdecea; --amber-bg: #fff6dc; --calm-bg: #e8f1f2;
+    --code: #f0efea;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #15191c; --card: #1e2428; --ink: #e8eaeb; --muted: #a2abb1; --line: #333b40;
+      --accent: #5aa3d6; --accent-ink: #0d1114;
+      --red: #ef5350; --amber: #f2b632; --calm: #7fb3ba;
+      --red-bg: #3a1f1f; --amber-bg: #3a3020; --calm-bg: #1f3033;
+      --code: #2a3135;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 16px; }
+  header { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin: 8px 0 12px; }
+  h1 { font-size: 1.6rem; margin: 0; letter-spacing: -0.01em; }
+  h2 { font-size: 1.15rem; margin: 0 0 8px; }
+  .sub { color: var(--muted); margin: 2px 0 0; }
+  .lang { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .lang button { border: 0; background: var(--card); color: var(--ink); padding: 6px 12px; font: inherit; cursor: pointer; }
+  .lang button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+  .privacy { background: var(--calm-bg); border-left: 4px solid var(--calm); padding: 10px 12px; border-radius: 6px; margin-bottom: 14px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin-bottom: 14px; }
+  label { display: block; font-weight: 600; margin: 0 0 4px; }
+  .hint { color: var(--muted); font-size: 0.9rem; font-weight: 400; }
+  textarea, input[type=text] { width: 100%; font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 8px; }
+  input[type=text] { font-family: inherit; font-size: 15px; }
+  textarea { min-height: 170px; resize: vertical; }
+  #body { min-height: 120px; }
+  .field { margin-bottom: 12px; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .row > .field { flex: 1 1 220px; }
+  button.btn { font: inherit; border-radius: 8px; padding: 9px 16px; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+  button.btn:focus-visible, .lang button:focus-visible, summary:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+  details > summary { cursor: pointer; font-weight: 600; }
+  details[open] > summary { margin-bottom: 8px; }
+  .help h3 { font-size: 1rem; margin: 12px 0 4px; }
+  .help ol { margin: 0; padding-left: 22px; }
+  .verdict { display: flex; gap: 16px; align-items: center; padding: 14px; border-radius: 10px; }
+  .verdict.many { background: var(--red-bg); }
+  .verdict.some { background: var(--amber-bg); }
+  .verdict.none { background: var(--calm-bg); }
+  .light { display: flex; flex-direction: column; gap: 6px; background: #22282c; padding: 8px; border-radius: 14px; flex: 0 0 auto; }
+  .lamp { width: 26px; height: 26px; border-radius: 50%; background: #3c4449; }
+  .verdict.many .lamp.r { background: var(--red); box-shadow: 0 0 10px var(--red); }
+  .verdict.some .lamp.a { background: var(--amber); box-shadow: 0 0 10px var(--amber); }
+  .verdict.none .lamp.c { background: var(--calm); box-shadow: 0 0 10px var(--calm); }
+  .verdict-text { font-size: 1.25rem; font-weight: 700; }
+  .score { color: var(--muted); font-size: 0.92rem; }
+  .facts { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 14px 0 4px; font-size: 0.95rem; }
+  .facts dt { color: var(--muted); }
+  .facts dd { margin: 0; overflow-wrap: anywhere; }
+  .chip { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 0.85rem; margin-right: 6px; border: 1px solid var(--line); }
+  .chip.pass { border-color: var(--calm); }
+  .chip.fail, .chip.softfail { border-color: var(--red); color: var(--red); font-weight: 600; }
+  .chip.none, .chip.missing { border-color: var(--amber); }
+  ul.signals { list-style: none; padding: 0; margin: 12px 0 0; }
+  ul.signals li { border: 1px solid var(--line); border-left-width: 5px; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+  ul.signals li.high { border-left-color: var(--red); }
+  ul.signals li.medium { border-left-color: var(--amber); }
+  ul.signals li.low { border-left-color: var(--line); }
+  ul.signals li.info { border-left-color: var(--calm); }
+  .sig-head { display: flex; justify-content: space-between; gap: 8px; font-weight: 600; }
+  .pts { color: var(--muted); font-weight: 400; white-space: nowrap; font-size: 0.9rem; }
+  .evidence { display: block; margin-top: 4px; font: 12px/1.4 ui-monospace, Menlo, Consolas, monospace; background: var(--code); padding: 3px 6px; border-radius: 4px; overflow-wrap: anywhere; }
+  .advice { margin-top: 12px; font-size: 0.95rem; }
+  footer { color: var(--muted); font-size: 0.88rem; padding: 8px 0 32px; }
+  .hidden { display: none; }
+  @media (max-width: 520px) {
+    h1 { font-size: 1.35rem; }
+    .verdict { flex-direction: row; align-items: flex-start; }
+    .lamp { width: 20px; height: 20px; }
+    .verdict-text { font-size: 1.08rem; }
+    .facts { grid-template-columns: 1fr; }
+    .facts dt { margin-top: 6px; }
+    button.btn { flex: 1 1 auto; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1 data-i18n="title">Hotel Phishing Check</h1>
+      <p class="sub" data-i18n="subtitle"></p>
+    </div>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" id="lang-en" aria-pressed="true">EN</button>
+      <button type="button" id="lang-de" aria-pressed="false">DE</button>
+    </div>
+  </header>
+
+  <div class="privacy" data-i18n="privacy"></div>
+
+  <section class="card">
+    <div class="field">
+      <label for="headers"><span data-i18n="headersLabel"></span> <span class="hint" data-i18n="headersHint"></span></label>
+      <textarea id="headers" spellcheck="false" autocomplete="off"></textarea>
+    </div>
+    <div class="field">
+      <label for="body"><span data-i18n="bodyLabel"></span> <span class="hint" data-i18n="bodyHint"></span></label>
+      <textarea id="body" spellcheck="false" autocomplete="off"></textarea>
+    </div>
+    <div class="row">
+      <button type="button" class="btn primary" id="check" data-i18n="check"></button>
+      <button type="button" class="btn" id="example" data-i18n="example"></button>
+      <button type="button" class="btn" id="clear" data-i18n="clear"></button>
+    </div>
+  </section>
+
+  <section class="card hidden" id="result" aria-live="polite">
+    <div class="verdict" id="verdict">
+      <div class="light" aria-hidden="true"><span class="lamp r"></span><span class="lamp a"></span><span class="lamp c"></span></div>
+      <div>
+        <div class="verdict-text" id="verdict-text"></div>
+        <div class="score" id="score"></div>
+      </div>
+    </div>
+    <dl class="facts" id="facts"></dl>
+    <h2 data-i18n="found"></h2>
+    <p class="hint hidden" id="nothing" data-i18n="nothing"></p>
+    <ul class="signals" id="signals"></ul>
+    <p class="advice" data-i18n="advice"></p>
+  </section>
+
+  <section class="card help">
+    <details>
+      <summary data-i18n="helpTitle"></summary>
+      <p data-i18n="helpIntro"></p>
+      <h3>Outlook (Windows desktop)</h3>
+      <ol data-i18n-list="helpOutlook"></ol>
+      <h3>Outlook on the web / new Outlook</h3>
+      <ol data-i18n-list="helpOwa"></ol>
+      <h3>Gmail</h3>
+      <ol data-i18n-list="helpGmail"></ol>
+      <h3>Apple Mail</h3>
+      <ol data-i18n-list="helpApple"></ol>
+    </details>
+  </section>
+
+  <section class="card">
+    <details id="settings-box">
+      <summary data-i18n="settingsTitle"></summary>
+      <p class="hint" data-i18n="settingsIntro"></p>
+      <div class="row">
+        <div class="field">
+          <label for="hotel-name" data-i18n="hotelName"></label>
+          <input type="text" id="hotel-name" autocomplete="off" placeholder="Grand Palm Hotel">
+        </div>
+        <div class="field">
+          <label for="hotel-domain" data-i18n="hotelDomain"></label>
+          <input type="text" id="hotel-domain" autocomplete="off" placeholder="grandpalm.test">
+        </div>
+      </div>
+      <div class="row">
+        <button type="button" class="btn" id="save" data-i18n="save"></button>
+        <span class="hint" id="saved" role="status"></span>
+      </div>
+    </details>
+  </section>
+
+  <footer>
+    <p data-i18n="footer"></p>
+  </footer>
+</div>
+
+<script>
+/*__ANALYZER__*/
+</script>
+<script>
+(function () {
+  'use strict';
+  /*__EXAMPLE__*/
+
+  var T = {
+    en: {
+      title: 'Hotel Phishing Check',
+      subtitle: 'Paste the headers of a suspicious email and see the warning signs in plain language.',
+      privacy: 'Private by design: this page runs only in your browser. Nothing you paste is sent anywhere or saved — it never leaves this device.',
+      headersLabel: 'Email headers',
+      headersHint: '(or the full email source — see “How do I get the headers?” below)',
+      bodyLabel: 'Email text',
+      bodyHint: '(optional — paste the message text or HTML to check links and wording)',
+      check: 'Check',
+      example: 'Load example',
+      clear: 'Clear',
+      found: 'What the check found',
+      nothing: 'No signals were found in what you pasted.',
+      points: 'Points: {n}. Thresholds: {s}+ = some warning signs, {m}+ = many warning signs.',
+      from: 'From', subject: 'Subject', auth: 'Authentication', hop: 'First external server', none: '—',
+      pts: '{n} pts', pt: '{n} pt', infoOnly: 'info',
+      empty: 'Please paste the email headers first.',
+      advice: 'If in doubt: do not click links, do not open attachments and do not reply. Check the reservation directly in the OTA extranet (typed in by hand) and forward the email to your IT or security contact.',
+      helpTitle: 'How do I get the headers?',
+      helpIntro: 'Headers are the technical “envelope” of an email. Copy them and paste them into the first box. If you can copy the full source (all of it), paste that — then links and attachments are checked too.',
+      helpOutlook: ['Open the email in its own window (double-click it).', 'Click File → Properties.', 'Copy everything in the “Internet headers” box (click in it, Ctrl+A, Ctrl+C).'],
+      helpOwa: ['Open the email.', 'Click … (More actions) → View → View message details.', 'Copy all the text in the window (Ctrl+A, Ctrl+C).'],
+      helpGmail: ['Open the email.', 'Click ⋮ (More) next to Reply → Show original.', 'Click “Copy to clipboard” and paste it here. This is the full source, so leave the second box empty.'],
+      helpApple: ['Open the email.', 'Choose View → Message → Raw Source (Option+Cmd+U).', 'Copy everything (Cmd+A, Cmd+C) and paste it here.'],
+      settingsTitle: 'Settings: your hotel',
+      settingsIntro: 'Add your hotel’s name and email domain to detect emails that pretend to come from your own hotel or manager. Saved only in this browser.',
+      hotelName: 'Hotel name', hotelDomain: 'Hotel email domain', save: 'Save', saved: 'Saved in this browser.', notSaved: 'Could not save here (private mode?) — the setting works until you close the page.',
+      footer: 'Signals only, not a security product: a result never means that an email is “safe”. Check only emails you are allowed to handle. All examples are synthetic. Explanations in English and German.'
+    },
+    de: {
+      title: 'Hotel-Phishing-Check',
+      subtitle: 'Fügen Sie die Header einer verdächtigen E-Mail ein und sehen Sie die Warnzeichen in einfacher Sprache.',
+      privacy: 'Privat by Design: Diese Seite läuft nur in Ihrem Browser. Nichts, was Sie einfügen, wird gesendet oder gespeichert – es verlässt dieses Gerät nie.',
+      headersLabel: 'E-Mail-Header',
+      headersHint: '(oder der komplette Quelltext – siehe „Wie bekomme ich die Header?“ unten)',
+      bodyLabel: 'E-Mail-Text',
+      bodyHint: '(optional – Text oder HTML der Nachricht, um Links und Formulierungen zu prüfen)',
+      check: 'Prüfen',
+      example: 'Beispiel laden',
+      clear: 'Leeren',
+      found: 'Was die Prüfung gefunden hat',
+      nothing: 'Im eingefügten Text wurden keine Signale gefunden.',
+      points: 'Punkte: {n}. Schwellen: ab {s} = einige Warnzeichen, ab {m} = viele Warnzeichen.',
+      from: 'Von', subject: 'Betreff', auth: 'Authentifizierung', hop: 'Erster externer Server', none: '—',
+      pts: '{n} Pkt.', pt: '{n} Pkt.', infoOnly: 'Info',
+      empty: 'Bitte fügen Sie zuerst die E-Mail-Header ein.',
+      advice: 'Im Zweifel: keine Links anklicken, keine Anhänge öffnen und nicht antworten. Prüfen Sie die Reservierung direkt im OTA-Extranet (Adresse selbst eintippen) und leiten Sie die E-Mail an Ihre IT- oder Sicherheitskontaktperson weiter.',
+      helpTitle: 'Wie bekomme ich die Header?',
+      helpIntro: 'Header sind der technische „Umschlag“ einer E-Mail. Kopieren Sie sie in das erste Feld. Wenn Sie den kompletten Quelltext kopieren können, fügen Sie diesen ein – dann werden auch Links und Anhänge geprüft.',
+      helpOutlook: ['Öffnen Sie die E-Mail in einem eigenen Fenster (Doppelklick).', 'Klicken Sie auf Datei → Eigenschaften.', 'Kopieren Sie alles im Feld „Internetkopfzeilen“ (hineinklicken, Strg+A, Strg+C).'],
+      helpOwa: ['Öffnen Sie die E-Mail.', 'Klicken Sie auf … (Weitere Aktionen) → Ansicht → Nachrichtendetails anzeigen.', 'Kopieren Sie den gesamten Text im Fenster (Strg+A, Strg+C).'],
+      helpGmail: ['Öffnen Sie die E-Mail.', 'Klicken Sie neben „Antworten“ auf ⋮ (Mehr) → Original anzeigen.', 'Klicken Sie auf „In die Zwischenablage kopieren“ und fügen Sie es hier ein. Das ist der komplette Quelltext, das zweite Feld bleibt leer.'],
+      helpApple: ['Öffnen Sie die E-Mail.', 'Wählen Sie Darstellung → E-Mail → Rohformat (Wahl+Cmd+U).', 'Alles kopieren (Cmd+A, Cmd+C) und hier einfügen.'],
+      settingsTitle: 'Einstellungen: Ihr Hotel',
+      settingsIntro: 'Geben Sie Namen und E-Mail-Domain Ihres Hotels ein, um E-Mails zu erkennen, die vorgeben, von Ihrem Hotel oder Ihrer Direktion zu kommen. Nur in diesem Browser gespeichert.',
+      hotelName: 'Hotelname', hotelDomain: 'E-Mail-Domain des Hotels', save: 'Speichern', saved: 'In diesem Browser gespeichert.', notSaved: 'Speichern nicht möglich (privater Modus?) – die Einstellung gilt, bis Sie die Seite schließen.',
+      footer: 'Nur Signale, kein Sicherheitsprodukt: Ein Ergebnis bedeutet nie, dass eine E-Mail „sicher“ ist. Prüfen Sie nur E-Mails, die Sie bearbeiten dürfen. Alle Beispiele sind erfunden. Erklärungen auf Englisch und Deutsch.'
+    }
+  };
+
+  var STORE_KEY = 'hotelPhishingCheck.settings';
+  var LANG_KEY = 'hotelPhishingCheck.lang';
+  var lang = 'en';
+  var settings = { hotelName: '', hotelDomain: '' };
+  var last = null;
+
+  function $(id) { return document.getElementById(id); }
+  function t(key) { return T[lang][key]; }
+  function fmt(s, vars) { return String(s).replace(/\{(\w+)\}/g, function (all, k) { return vars[k] != null ? vars[k] : all; }); }
+
+  function load(key) { try { return window.localStorage.getItem(key); } catch (e) { return null; } }
+  function save(key, value) { try { window.localStorage.setItem(key, value); return true; } catch (e) { return false; } }
+
+  function applyLang() {
+    document.documentElement.lang = lang;
+    document.title = t('title');
+    $('lang-en').setAttribute('aria-pressed', String(lang === 'en'));
+    $('lang-de').setAttribute('aria-pressed', String(lang === 'de'));
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (el) {
+      el.textContent = t(el.getAttribute('data-i18n'));
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n-list]'), function (el) {
+      el.textContent = '';
+      t(el.getAttribute('data-i18n-list')).forEach(function (item) {
+        var li = document.createElement('li');
+        li.textContent = item;
+        el.appendChild(li);
+      });
+    });
+    if (last) render(last);
+  }
+
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  function fact(dl, label, value) {
+    dl.appendChild(el('dt', '', label));
+    var dd = el('dd');
+    if (typeof value === 'string') dd.textContent = value;
+    else dd.appendChild(value);
+    dl.appendChild(dd);
+  }
+
+  function render(res) {
+    var box = $('verdict');
+    box.className = 'verdict ' + res.verdict;
+    $('verdict-text').textContent = res.verdictText[lang];
+    $('score').textContent = fmt(t('points'), { n: res.score, s: PhishCheck.THRESHOLDS.some, m: PhishCheck.THRESHOLDS.many });
+
+    var dl = $('facts');
+    dl.textContent = '';
+    var from = res.info.from;
+    fact(dl, t('from'), from.address ? (from.display ? from.display + ' <' + from.address + '>' : from.address) : t('none'));
+    fact(dl, t('subject'), res.info.subject || t('none'));
+    var chips = el('span');
+    ['spf', 'dkim', 'dmarc'].forEach(function (m) {
+      var r = res.info.auth[m];
+      chips.appendChild(el('span', 'chip ' + r, m.toUpperCase() + ': ' + r));
+    });
+    fact(dl, t('auth'), chips);
+    var hop = res.info.firstHop;
+    fact(dl, t('hop'), hop ? hop.host + ' [' + hop.ip + ']' : t('none'));
+
+    var list = $('signals');
+    list.textContent = '';
+    var shown = res.signals.filter(function (s) { return s.id !== 'info-first-hop'; });
+    $('nothing').classList.toggle('hidden', shown.length > 0);
+    shown.forEach(function (s) {
+      var li = el('li', s.severity);
+      var head = el('div', 'sig-head');
+      head.appendChild(el('span', '', s.title[lang]));
+      head.appendChild(el('span', 'pts', s.points ? fmt(s.points === 1 ? t('pt') : t('pts'), { n: s.points }) : t('infoOnly')));
+      li.appendChild(head);
+      li.appendChild(el('div', '', s.text[lang]));
+      if (s.evidence) li.appendChild(el('code', 'evidence', s.evidence));
+      list.appendChild(li);
+    });
+    $('result').classList.remove('hidden');
+  }
+
+  function runCheck() {
+    var headers = $('headers').value;
+    var body = $('body').value;
+    if (!headers.trim()) {
+      $('headers').focus();
+      $('headers').setAttribute('placeholder', t('empty'));
+      return;
+    }
+    last = PhishCheck.analyze(headers, body, settings);
+    render(last);
+    $('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function init() {
+    var storedLang = load(LANG_KEY);
+    if (storedLang === 'de' || storedLang === 'en') lang = storedLang;
+    else if (/^de\b/i.test(navigator.language || '')) lang = 'de';
+    try {
+      var s = JSON.parse(load(STORE_KEY) || 'null');
+      if (s && typeof s === 'object') {
+        settings.hotelName = String(s.hotelName || '');
+        settings.hotelDomain = String(s.hotelDomain || '');
+      }
+    } catch (e) { /* ignore broken storage */ }
+    $('hotel-name').value = settings.hotelName;
+    $('hotel-domain').value = settings.hotelDomain;
+
+    $('lang-en').addEventListener('click', function () { lang = 'en'; save(LANG_KEY, lang); applyLang(); });
+    $('lang-de').addEventListener('click', function () { lang = 'de'; save(LANG_KEY, lang); applyLang(); });
+    $('check').addEventListener('click', runCheck);
+    $('example').addEventListener('click', function () {
+      $('headers').value = EXAMPLE_EMAIL;
+      $('body').value = '';
+      runCheck();
+    });
+    $('clear').addEventListener('click', function () {
+      $('headers').value = '';
+      $('body').value = '';
+      last = null;
+      $('result').classList.add('hidden');
+      $('headers').focus();
+    });
+    $('save').addEventListener('click', function () {
+      settings.hotelName = $('hotel-name').value.trim();
+      settings.hotelDomain = $('hotel-domain').value.trim().replace(/^.*@/, '').toLowerCase();
+      $('hotel-domain').value = settings.hotelDomain;
+      var ok = save(STORE_KEY, JSON.stringify(settings));
+      $('saved').textContent = ok ? t('saved') : t('notSaved');
+      if (last) runCheck();
+    });
+    applyLang();
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>

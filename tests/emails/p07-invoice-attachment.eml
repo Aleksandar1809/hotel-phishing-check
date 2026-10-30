@@ -1,0 +1,38 @@
+Return-Path: <mailer@bulk-sender.test>
+Received: from bulk-sender.test (unknown [192.0.2.140]) by mx1.grandpalm.test with ESMTP id 2d77; Sun, 18 Oct 2026 11:30:02 +0400
+Authentication-Results: mx1.grandpalm.test; spf=fail smtp.mailfrom=bulk-sender.test; dkim=none; dmarc=fail (p=REJECT) header.from=supplier-invoices.test
+From: "Accounts Payable" <ap@supplier-invoices.test>
+Reply-To: "Accounts" <accounts.dept@quick-mailbox.test>
+To: finance@grandpalm.test
+Subject: Overdue invoice INV-77310
+Date: Sun, 18 Oct 2026 10:29:55 +0300
+Message-ID: <b2d77@supplier-invoices.test>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="==BOUNDARY_77310=="
+
+--==BOUNDARY_77310==
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+
+Hello,
+
+Please find attached the overdue invoice INV-77310 and the statement.
+The statement is in a password protected ZIP file, the password is 77310.
+
+Accounts Payable
+
+--==BOUNDARY_77310==
+Content-Type: text/html; name="INV-77310.pdf.html"
+Content-Disposition: attachment; filename="INV-77310.pdf.html"
+Content-Transfer-Encoding: base64
+
+PGh0bWw+PGJvZHk+U3ludGhldGljIHRlc3QgYXR0YWNobWVudC48L2JvZHk+PC9odG1sPg==
+
+--==BOUNDARY_77310==
+Content-Type: application/zip; name="statement-77310.zip"
+Content-Disposition: attachment; filename="statement-77310.zip"
+Content-Transfer-Encoding: base64
+
+UEsFBgAAAAAAAAAAAAAAAAAAAAAAAA==
+
+--==BOUNDARY_77310==--
