@@ -1,0 +1,19 @@
+Return-Path: <maria.k@example.com>
+Received: from out.example.com (out.example.com [198.51.100.21]) by mx1.grandpalm.test with ESMTPS id 0a11; Tue, 20 Oct 2026 19:02:44 +0400
+Authentication-Results: mx1.grandpalm.test; spf=pass smtp.mailfrom=example.com; dkim=pass header.d=example.com; dmarc=pass (p=REJECT) header.from=example.com
+From: "Maria Example" <maria.k@example.com>
+To: reservations@grandpalm.test
+Subject: My Booking.com reservation 4471 - late check-in
+Date: Tue, 20 Oct 2026 18:02:39 +0300
+Message-ID: <d0a11@example.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Hello,
+
+I booked a deluxe room for 2 nights through Booking.com (reservation 4471).
+Our flight lands at 01:30, so we will arrive around 03:00. Is late check-in possible?
+Could you also tell me if there is a shuttle from the airport?
+
+Thank you,
+Maria

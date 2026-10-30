@@ -1,0 +1,17 @@
+Return-Path: <reservations@grandpalm.test>
+Received: from pms.grandpalm.test (pms.grandpalm.test [10.0.0.20]) by mail.grandpalm.test with ESMTP id 1c4d; Thu, 22 Oct 2026 17:00:05 +0400
+Authentication-Results: mail.grandpalm.test; spf=pass smtp.mailfrom=grandpalm.test; dkim=pass header.d=grandpalm.test; dmarc=pass (p=REJECT) header.from=grandpalm.test
+From: "Grand Palm Hotel Reservations" <reservations@grandpalm.test>
+To: frontoffice@grandpalm.test
+Subject: Arrivals list for tomorrow - 46 rooms
+Date: Thu, 22 Oct 2026 17:00:01 +0400
+Message-ID: <f1c4d@grandpalm.test>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Hi team,
+
+Tomorrow we have 46 arrivals, including 2 groups (Booking.com and Expedia allotments are already in the PMS).
+The full list is on the intranet: https://intranet.grandpalm.test/arrivals/2026-10-23
+
+Reservations

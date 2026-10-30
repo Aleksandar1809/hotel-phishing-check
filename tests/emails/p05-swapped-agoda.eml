@@ -1,0 +1,16 @@
+Return-Path: <noreply@ag0da.test>
+Received: from relay.ag0da.test (relay.ag0da.test [198.51.100.203]) by mx1.grandpalm.test with ESMTPS id 3b9d; Fri, 16 Oct 2026 14:05:12 +0400
+Authentication-Results: mx1.grandpalm.test; spf=pass smtp.mailfrom=ag0da.test; dkim=pass header.d=ag0da.test; dmarc=pass (p=NONE) header.from=ag0da.test
+From: "Agoda YCS" <noreply@ag0da.test>
+To: reservations@grandpalm.test
+Subject: Action needed: reservation 552019 not confirmed
+Date: Fri, 16 Oct 2026 13:05:02 +0300
+Message-ID: <f3b9d@ag0da.test>
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+<html><body>
+<p>Dear hotel partner,</p>
+<p>Reservation 552019 has not been confirmed in YCS. This reservation will be cancelled automatically in 6 hours.</p>
+<p><a href="https://ycs.ag0da.test/confirm/552019">Confirm the reservation now</a></p>
+</body></html>

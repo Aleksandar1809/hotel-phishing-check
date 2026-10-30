@@ -1,0 +1,20 @@
+Return-Path: <bounce@booking-partnerhub.test>
+Received: from mx1.grandpalm.test (10.0.0.5) by mail.grandpalm.test (10.0.0.9); Mon, 12 Oct 2026 08:14:03 +0400
+Received: from smtp.booking-partnerhub.test (smtp.booking-partnerhub.test [203.0.113.24]) by mx1.grandpalm.test with ESMTP id 4f1a; Mon, 12 Oct 2026 08:14:01 +0400
+Authentication-Results: mx1.grandpalm.test; spf=softfail (domain of transitioning bounce@booking-partnerhub.test does not designate 203.0.113.24 as permitted sender) smtp.mailfrom=booking-partnerhub.test; dkim=none; dmarc=fail (p=NONE) header.from=booking-partnerhub.test
+From: "Booking.com Partner Hub" <no-reply@booking-partnerhub.test>
+Reply-To: billing@payments-desk.test
+To: reservations@grandpalm.test
+Subject: Urgent: card verification failed for reservation 4471-2209
+Date: Mon, 12 Oct 2026 07:13:55 +0300
+Message-ID: <a81c2@booking-partnerhub.test>
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+<html><body>
+<p>Dear Partner,</p>
+<p>The guest's card verification failed for reservation 4471-2209. To avoid losing the booking you must <b>update your payment details</b> within 24 hours.</p>
+<p>If we do not receive your confirmation, your account will be suspended.</p>
+<p><a href="https://booking-partnerhub.test/extranet/verify?id=4471">Verify payment details</a></p>
+<p>Booking.com Partner Support</p>
+</body></html>

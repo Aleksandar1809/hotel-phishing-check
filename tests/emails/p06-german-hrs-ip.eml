@@ -1,0 +1,23 @@
+Return-Path: <service@hrs-hotelportal.test>
+Received: from [203.0.113.9] (helo=hrs-hotelportal.test) by mx1.grandpalm.test with SMTP id 6aa0; Sat, 17 Oct 2026 03:11:47 +0400
+Received-SPF: Fail (mx1.grandpalm.test: domain of hrs-hotelportal.test does not designate 203.0.113.9 as permitted sender)
+Authentication-Results: mx1.grandpalm.test; dkim=fail (signature verification failed) header.d=hrs-hotelportal.test; dmarc=fail (p=QUARANTINE) header.from=hrs-hotelportal.test
+From: =?UTF-8?Q?HRS_Hotelservice_=E2=80=93_Abrechnung?= <service@hrs-hotelportal.test>
+To: buchhaltung@grandpalm.test
+Subject: =?UTF-8?Q?Ihre_Reservierung_wird_storniert_=E2=80=93_Zahlung_fehlgeschlagen?=
+Date: Sat, 17 Oct 2026 01:11:40 +0200
+Message-ID: <a6aa0@hrs-hotelportal.test>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+Sehr geehrte Damen und Herren,
+
+die Zahlung f=C3=BCr die Firmenbuchung 30017 ist fehlgeschlagen. Bitte best=
+=C3=A4tigen Sie die Kreditkarte des Gastes innerhalb von 12 Stunden, sonst =
+wird die Reservierung automatisch storniert.
+
+Zum Portal: http://203.0.113.9/hrs/portal/login
+Alternativ: https://xn--hrs-prtal-q9a.test/login
+
+Ihr HRS Hotelservice

@@ -1,0 +1,22 @@
+Return-Path: <security@partner-verify.test>
+Received: from vps-11.partner-verify.test ([192.0.2.77]) by mx1.grandpalm.test with SMTP id 9c03; Wed, 14 Oct 2026 21:40:19 +0400
+Authentication-Results: mx1.grandpalm.test; spf=none smtp.mailfrom=partner-verify.test; dkim=none; dmarc=none header.from=partner-verify.test
+From: "Partner Security Team" <security@partner-verify.test>
+To: reservations@grandpalm.test
+Subject: Booking.com: confirm you are not a robot to keep your property online
+Date: Wed, 14 Oct 2026 20:40:12 +0300
+Message-ID: <d77aa@partner-verify.test>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Dear property manager,
+
+We detected unusual activity on your extranet. To keep your property online, complete the human verification:
+
+1. Press the Windows key + R
+2. Press Ctrl + V to paste the verification code
+3. Press Enter
+
+The verification code was copied automatically when you opened this email.
+
+Partner Security Team

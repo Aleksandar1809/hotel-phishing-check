@@ -1,0 +1,19 @@
+Return-Path: <alerts@expeida.test>
+Received: from mail.expeida.test (mail.expeida.test [203.0.113.150]) by mx1.grandpalm.test with ESMTPS id 1e5c; Thu, 15 Oct 2026 06:22:40 +0400
+Authentication-Results: mx1.grandpalm.test; spf=pass smtp.mailfrom=expeida.test; dkim=pass header.d=expeida.test; dmarc=pass (p=NONE) header.from=expeida.test
+From: "Expedia Partner Central" <alerts@expeida.test>
+To: revenue@grandpalm.test
+Subject: A guest requested a change to reservation 99812
+Date: Thu, 15 Oct 2026 05:22:33 +0300
+Message-ID: <e5c1e@expeida.test>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Hello Partner,
+
+A guest has requested a date change for reservation 99812.
+Please sign in to review and accept the request:
+
+https://expeida.test/partner/login?next=reservations
+
+Expedia Partner Central

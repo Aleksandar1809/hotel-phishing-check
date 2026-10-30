@@ -1,0 +1,18 @@
+Return-Path: <bounces+8812@mailer.example.com>
+Received: from mta3.mailer.example.com (mta3.mailer.example.com [192.0.2.33]) by mx1.grandpalm.test with ESMTPS id 7d8e; Fri, 23 Oct 2026 12:00:31 +0400
+Authentication-Results: mx1.grandpalm.test; spf=pass smtp.mailfrom=mailer.example.com; dkim=pass header.d=example.com; dmarc=pass (p=NONE) header.from=example.com
+From: "City Events Calendar" <news@events.example.com>
+To: concierge@grandpalm.test
+Subject: This week in the city: 12 events for your guests
+Date: Fri, 23 Oct 2026 11:00:27 +0300
+Message-ID: <a7d8e@events.example.com>
+List-Unsubscribe: <https://events.example.com/unsubscribe?u=8812>
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+<html><body>
+<h1>This week in the city</h1>
+<p>Here are 12 events your concierge team can recommend to guests this week.</p>
+<p><a href="https://events.example.com/week/43">See all events</a></p>
+<p><a href="https://events.example.com/unsubscribe?u=8812">Unsubscribe</a></p>
+</body></html>

@@ -1,0 +1,18 @@
+Return-Path: <gm.grandpalm.office@example.com>
+Received: from out.example.com (out.example.com [198.51.100.18]) by mx1.grandpalm.test with ESMTPS id 8f00; Mon, 19 Oct 2026 16:45:30 +0400
+Authentication-Results: mx1.grandpalm.test; spf=pass smtp.mailfrom=example.com; dkim=pass header.d=example.com; dmarc=pass (p=REJECT) header.from=example.com
+From: "Grand Palm Hotel - General Manager" <gm.grandpalm.office@example.com>
+Reply-To: gm-private@finance-mail.test
+To: finance@grandpalm.test
+Subject: Confidential - supplier transfer today
+Date: Mon, 19 Oct 2026 15:45:22 +0300
+Message-ID: <c8f00@example.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Hi,
+
+I am in a meeting with the owners and cannot talk. I need an urgent payment of 18,400 AED to a new supplier before 5 pm today.
+I will send the bank details in my next email. Please keep this confidential and reply only to this address.
+
+Sent from my phone

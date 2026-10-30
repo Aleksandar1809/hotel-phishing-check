@@ -1,0 +1,18 @@
+Return-Path: <guest.relations.desk@example.com>
+Received: from out.example.com (out.example.com [198.51.100.17]) by mx1.grandpalm.test with ESMTPS id 77b2; Tue, 13 Oct 2026 10:02:11 +0400
+Authentication-Results: mx1.grandpalm.test; spf=pass smtp.mailfrom=example.com; dkim=pass header.d=example.com; dmarc=pass (p=REJECT) header.from=example.com
+From: "Booking.com Guest Relations" <guest.relations.desk@example.com>
+To: frontoffice@grandpalm.test
+Subject: Guest complaint about your property - response required
+Date: Tue, 13 Oct 2026 09:02:05 +0300
+Message-ID: <c2e91@example.com>
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+<html><body>
+<p>Hello,</p>
+<p>We received a guest complaint from a guest who stayed at your property last week. The guest reported a serious hygiene issue and attached photos.</p>
+<p>Please review the photos and respond within 48 hours:</p>
+<p><a href="https://files-share.test/d/8812/photos">https://admin.booking.com/hotel/complaints/8812</a></p>
+<p>Kind regards,<br>Guest Relations Team</p>
+</body></html>
