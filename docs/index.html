@@ -202,16 +202,25 @@
   //   domains:  the brand's real domains (compared at the registrable level)
   //   names:    domain labels compared for lookalikes (typos, swapped characters)
   //   contains: strings that are suspicious anywhere inside a non-official label
+  // Sources (checked 2026-11-01):
+  //  Airbnb: airbnb.com/help/article/971 (all listed senders are airbnb.com subdomains;
+  //    third-party survey senders express.medallia.com and qemailserver.com are left out on purpose,
+  //    because anyone can send from those shared platforms).
+  //  Expedia: partner.expediagroup.com "preventing phishing attacks" (expediagroup.com,
+  //    expediapartnercentral.com, mg.vrbo.com, mg.abritel.fr, mg.fewo-direkt.de).
+  //  Agoda: partnerhub.agoda.com security article (agoda.com, agoda.net for partner documents).
+  //  HRS: hrs.com imprint (hrs.de, hrs.com).
   var OFFICIAL_BRANDS = [
     { name: 'Booking.com', match: /booking\s?\.\s?com|\bbooking\s+(partner|extranet|support|security|admin)/i,
       domains: ['booking.com', 'bstatic.com'], names: ['booking', 'bookingcom'], contains: ['bookingcom'] },
     { name: 'Expedia', match: /\bexpedia\b/i,
-      domains: ['expedia.com', 'expediagroup.com', 'expediapartnercentral.com', 'expedia.de', 'expedia.co.uk', 'expedia.ae', 'expedia.at', 'expedia.ch'],
+      domains: ['expedia.com', 'expediagroup.com', 'expediapartnercentral.com', 'expedia.de', 'expedia.co.uk', 'expedia.ae', 'expedia.at', 'expedia.ch',
+        'vrbo.com', 'abritel.fr', 'fewo-direkt.de'],
       names: ['expedia'], contains: ['expedia'] },
     { name: 'Airbnb', match: /\bairbnb\b/i,
       domains: ['airbnb.com', 'airbnb.de', 'airbnb.co.uk', 'airbnb.ae'], names: ['airbnb'], contains: ['airbnb'] },
     { name: 'Agoda', match: /\bagoda\b/i,
-      domains: ['agoda.com'], names: ['agoda'], contains: ['agoda'] },
+      domains: ['agoda.com', 'agoda.net'], names: ['agoda'], contains: ['agoda'] },
     { name: 'Hotels.com', match: /\bhotels\s?\.\s?com\b/i,
       domains: ['hotels.com'], names: ['hotelscom'], contains: ['hotelscom'] },
     { name: 'Trip.com', match: /\btrip\s?\.\s?com\b/i,
