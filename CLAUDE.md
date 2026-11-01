@@ -6,7 +6,7 @@ Hotels are heavily targeted by fake Booking.com and OTA emails.
 Purpose: a portfolio piece for an email-security and tech-sales job search.
 
 ## Owner
-Aca is not a developer but is very tech-literate. He is a former hotel Front Office Manager.
+Aleksandar (short form "Aco") is not a developer but is very tech-literate. He is a former hotel Front Office Manager.
 Talk to him in Bosnian/Serbian, in at most 2 short sentences per explanation.
 
 ## Non-negotiable rules
@@ -72,7 +72,7 @@ Each check produces a signal with a one-sentence explanation in English and Germ
    - Must work at mobile width.
 3. **Docs.**
    - README.md: what the tool does and doesn't do, privacy, scoring, and limits ("signals only, not a security product").
-   - LEARN.md for Aca, in simple English, one paragraph each on:
+   - LEARN.md for Aco, in simple English, one paragraph each on:
      - SPF, DKIM and DMARC
      - lookalike domains
      - why hotels are targeted
