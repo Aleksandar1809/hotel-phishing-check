@@ -1,0 +1,25 @@
+Return-Path: <office@nordwind-supplies.test>
+Received: from mail.nordwind-supplies.test (mail.nordwind-supplies.test [192.0.2.77]) by mx1.grandpalm.test with ESMTPS id 4c18; Wed, 04 Nov 2026 09:40:11 +0100
+Authentication-Results: mx1.grandpalm.test; spf=pass smtp.mailfrom=nordwind-supplies.test; dkim=pass header.d=nordwind-supplies.test; dmarc=pass header.from=nordwind-supplies.test
+From: "Petra Lindqvist - Nordwind Supplies" <office@nordwind-supplies.test>
+Reply-To: "Petra Lindqvist" <p.lindqvist.accounts@fastmail-box.test>
+To: accounts@grandpalm.test
+Subject: Updated bank details for open invoices
+Date: Wed, 04 Nov 2026 09:40:02 +0100
+Message-ID: <c4c18@nordwind-supplies.test>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Hello,
+
+Due to an audit, our bank account has changed. Please update our bank details
+before the next payment run and use the new IBAN below for all open invoices:
+
+IBAN: XX00 TEST 0000 0000 0000 00 (synthetic test value)
+
+Invoice NF-2210 is overdue, please pay today to avoid a delivery stop.
+Please reply only to this email, our phone line is currently down.
+
+Kind regards,
+Petra Lindqvist
+Accounts, Nordwind Supplies (fictional)

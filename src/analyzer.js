@@ -1,5 +1,5 @@
 /*
- * Hotel Phishing Check - analyzer.
+ * Phishing Check - analyzer.
  * Works in Node (require('./analyzer.js')) and in the browser (window.PhishCheck).
  * Pure functions only: no network calls, no storage, no dependencies.
  */
@@ -44,7 +44,12 @@
     { name: 'Trip.com', match: /\btrip\s?\.\s?com\b/i,
       domains: ['trip.com', 'ctrip.com'], names: ['tripcom', 'ctrip'], contains: ['tripcom'] },
     { name: 'HRS', match: /\bHRS\b/,
-      domains: ['hrs.com', 'hrs.de'], names: ['hrs'], contains: [] }
+      domains: ['hrs.com', 'hrs.de'], names: ['hrs'], contains: [] },
+    // Generic example set (not hotel-specific). Shared hosting such as sharepoint.com is left out
+    // on purpose, because anyone can create a tenant there.
+    { name: 'Microsoft 365', match: /\bmicrosoft\b|\boffice\s?365\b|\bM365\b/i,
+      domains: ['microsoft.com', 'microsoftonline.com', 'office.com', 'office365.com', 'outlook.com', 'live.com'],
+      names: ['microsoft', 'office365', 'microsoftonline'], contains: ['microsoft', 'office365'] }
   ];
 
   var SHORTENERS = [
@@ -88,6 +93,8 @@
     'content-complaint-link': 3,
     'content-cancellation': 2,
     'content-clickfix': 5,
+    'content-credentials': 3,
+    'content-bank-change': 4,
     'attachment-risky': 4,
     'attachment-password': 3,
     'info-first-hop': 0
@@ -111,6 +118,8 @@
     'content-complaint': /guest complaint|complaint (from|by) (a|your|the) guest|guest (has )?(reported|complained|claims)|negative review|gästebeschwerde|beschwerde (eines|von einem|des) gast|gast hat sich beschwert/i,
     'content-cancellation': /(reservation|booking)s? (will|would) be (automatically )?cancel+ed|(automatically )?cancel+ed (unless|if you do not|if not|within)|(reservierung|buchung) wird (automatisch )?(storniert|annulliert)|(automatisch|sonst) storniert/i,
     'content-clickfix': /win(dows)?(\s*-?\s*(key|taste))?\s*\+\s*r\b|press (the )?windows key|ctrl\s*\+\s*v[\s\S]{0,40}enter|paste (the|this) (command|code)|run dialog|powershell|mshta|cmd\.exe|ausführen-dialog|befehl einfügen|strg\s*\+\s*v[\s\S]{0,40}(enter|eingabe)/i,
+    'content-credentials': /(your )?password (will )?(expire|expires|expired|has expired)|(re-?)?(verify|confirm|validate) (your )?(account|mailbox|e-?mail|identity|login|credentials)|sign in (again )?to (keep|continue|avoid|restore|retain|view)|mailbox (is )?(full|storage|quota)|(storage|quota) (is )?(full|exceeded|almost full)|(shared|secure) document (is )?waiting|kennwort läuft (bald )?ab|passwort läuft (bald )?ab|(konto|postfach|identität) (bestätigen|verifizieren)|melden sie sich (erneut )?an, um|postfach (ist )?voll|speicher(platz)? (ist )?voll/i,
+    'content-bank-change': /(new|updated|changed|change (of|to) (our|the))( bank)? (bank (account|details)|account details|iban|banking details|payment details)|(bank (account|details)|banking details|iban) (has|have) (been )?(changed|updated)|(update|change) (the |our )?(bank|banking|iban|payment) (details|account|information)|(use|pay (in)?to) (the |our |this )?new (account|iban)|neue (bankverbindung|kontoverbindung|iban|kontodaten)|(bankverbindung|kontoverbindung|iban) (hat sich )?(geändert|aktualisiert)|geänderte (bankverbindung|kontoverbindung)/i,
     'attachment-password': /(password|passwort|kennwort)[^.\n]{0,60}(zip|rar|7z|archive|archiv|attachment|anhang|file|datei)|(zip|rar|7z|archive|archiv|attachment|anhang|file|datei)[^.\n]{0,60}(password|passwort|kennwort)/i
   };
 
@@ -256,8 +265,8 @@
     },
     'content-payment': {
       title: { en: 'Payment or card request', de: 'Zahlungs- oder Kartenaufforderung' },
-      en: 'The text asks for an urgent payment or for card details to be verified, a classic fake-OTA trick.',
-      de: 'Der Text fordert eine dringende Zahlung oder die Bestätigung von Kartendaten – ein klassischer Trick gefälschter OTA-E-Mails.'
+      en: 'The text asks for an urgent payment or for card details to be verified, a classic trick in fake OTA and supplier emails.',
+      de: 'Der Text fordert eine dringende Zahlung oder die Bestätigung von Kartendaten – ein klassischer Trick gefälschter OTA- und Lieferanten-E-Mails.'
     },
     'content-suspension': {
       title: { en: 'Account suspension threat', de: 'Drohung mit Kontosperrung' },
@@ -278,6 +287,16 @@
       title: { en: '“ClickFix” instructions', de: '„ClickFix“-Anleitung' },
       en: 'The email asks you to press Win+R or paste a command — never do this, it installs malware (the “ClickFix” trick).',
       de: 'Die E-Mail fordert Sie auf, Win+R zu drücken oder einen Befehl einzufügen – tun Sie das nie, so wird Schadsoftware installiert (der „ClickFix“-Trick).'
+    },
+    'content-credentials': {
+      title: { en: 'Login or password request', de: 'Anmelde- oder Passwortaufforderung' },
+      en: 'The text pushes you to sign in, verify your account or renew a password, the typical bait for a fake login page.',
+      de: 'Der Text drängt Sie, sich anzumelden, Ihr Konto zu bestätigen oder ein Passwort zu erneuern – der typische Köder für eine gefälschte Anmeldeseite.'
+    },
+    'content-bank-change': {
+      title: { en: 'Changed bank details', de: 'Geänderte Bankverbindung' },
+      en: 'The email announces new bank details for payments; always confirm by phone with a number you already know before paying.',
+      de: 'Die E-Mail kündigt eine neue Bankverbindung an; bestätigen Sie das vor jeder Zahlung telefonisch über eine Ihnen bereits bekannte Nummer.'
     },
     'attachment-risky': {
       title: { en: 'Risky attachment', de: 'Riskanter Anhang' },
@@ -964,7 +983,7 @@
     // 6. Content signals
     var bodyPlain = mime.text.join('\n') + '\n' + mime.html.map(stripHtml).join('\n');
     var content = (subject + '\n' + bodyPlain).replace(/[ \t]+/g, ' ');
-    ['content-payment', 'content-suspension', 'content-cancellation', 'content-clickfix'].forEach(function (id) {
+    ['content-payment', 'content-suspension', 'content-cancellation', 'content-clickfix', 'content-credentials', 'content-bank-change'].forEach(function (id) {
       var m = CONTENT_PATTERNS[id].exec(content);
       if (m) signals.push(makeSignal(id, '', '', '“' + m[0].trim() + '”'));
     });
