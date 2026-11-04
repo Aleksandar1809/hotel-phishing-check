@@ -1,0 +1,119 @@
+{
+ "domain": "quarantine.example.com",
+ "note": "quarantine + ~all, Google style unquoted TXT, no DKIM at common selectors",
+ "answers": {
+  "quarantine.example.com|MX": {
+   "Status": 0,
+   "Question": [
+    {
+     "name": "quarantine.example.com",
+     "type": 15
+    }
+   ],
+   "Answer": [
+    {
+     "name": "quarantine.example.com",
+     "type": 15,
+     "TTL": 300,
+     "data": "10 mail.example.com."
+    }
+   ]
+  },
+  "quarantine.example.com|TXT": {
+   "Status": 0,
+   "Question": [
+    {
+     "name": "quarantine.example.com",
+     "type": 16
+    }
+   ],
+   "Answer": [
+    {
+     "name": "quarantine.example.com",
+     "type": 16,
+     "TTL": 300,
+     "data": "v=spf1 include:_spf.example.com ~all"
+    }
+   ]
+  },
+  "_dmarc.quarantine.example.com|TXT": {
+   "Status": 0,
+   "Question": [
+    {
+     "name": "_dmarc.quarantine.example.com",
+     "type": 16
+    }
+   ],
+   "Answer": [
+    {
+     "name": "_dmarc.quarantine.example.com",
+     "type": 16,
+     "TTL": 300,
+     "data": "v=DMARC1;p=quarantine;rua=mailto:r@example.com"
+    }
+   ]
+  },
+  "selector1._domainkey.quarantine.example.com|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "selector1._domainkey.quarantine.example.com",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  },
+  "selector2._domainkey.quarantine.example.com|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "selector2._domainkey.quarantine.example.com",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  },
+  "google._domainkey.quarantine.example.com|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "google._domainkey.quarantine.example.com",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  },
+  "k1._domainkey.quarantine.example.com|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "k1._domainkey.quarantine.example.com",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  },
+  "default._domainkey.quarantine.example.com|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "default._domainkey.quarantine.example.com",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  }
+ },
+ "expect": {
+  "verdict": "strong",
+  "findings": [
+   "dmarc-quarantine",
+   "spf-soft",
+   "dkim-not-found"
+  ],
+  "steps": [
+   "dkim-check",
+   "verify"
+  ]
+ }
+}

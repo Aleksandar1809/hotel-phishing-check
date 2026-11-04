@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
-<title>Hotel Phishing Check</title>
+<title>Phishing Check</title>
+<meta name="description" content="Phishing Check — spot fake emails before you click. Runs only in your browser.">
 <style>
   :root {
     --bg: #f6f5f2; --card: #ffffff; --ink: #1d2327; --muted: #5d676e; --line: #dcdcd6;
@@ -44,6 +45,10 @@
   .field { margin-bottom: 12px; }
   .row { display: flex; flex-wrap: wrap; gap: 8px; }
   .row > .field { flex: 1 1 220px; }
+  .tools { font-size: 0.95rem; margin: -4px 0 12px; color: var(--muted); }
+  .tools a { color: var(--accent); }
+  .tools .here { font-weight: 600; color: var(--ink); }
+  select { font: inherit; border-radius: 8px; padding: 8px 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); max-width: 100%; }
   button.btn { font: inherit; border-radius: 8px; padding: 9px 16px; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
   button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
   button.btn:focus-visible, .lang button:focus-visible, summary:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
@@ -96,7 +101,7 @@
 <div class="wrap">
   <header>
     <div>
-      <h1 data-i18n="title">Hotel Phishing Check</h1>
+      <h1 data-i18n="title">Phishing Check</h1>
       <p class="sub" data-i18n="subtitle"></p>
     </div>
     <div class="lang" role="group" aria-label="Language">
@@ -104,6 +109,8 @@
       <button type="button" id="lang-de" aria-pressed="false">DE</button>
     </div>
   </header>
+
+  <nav class="tools"><span class="here" data-i18n="navHere"></span> · <a href="domain.html" data-i18n="navOther"></a></nav>
 
   <div class="privacy" data-i18n="privacy"></div>
 
@@ -118,6 +125,11 @@
     </div>
     <div class="row">
       <button type="button" class="btn primary" id="check" data-i18n="check"></button>
+      <select id="example-set" aria-label="Example">
+        <option value="ota" data-i18n="exOta"></option>
+        <option value="m365" data-i18n="exM365"></option>
+        <option value="bank" data-i18n="exBank"></option>
+      </select>
       <button type="button" class="btn" id="example" data-i18n="example"></button>
       <button type="button" class="btn" id="clear" data-i18n="clear"></button>
     </div>
@@ -189,8 +201,10 @@
 
   var T = {
     en: {
-      title: 'Hotel Phishing Check',
-      subtitle: 'Paste the headers of a suspicious email and see the warning signs in plain language.',
+      title: 'Phishing Check',
+      subtitle: 'Spot fake emails before you click. Paste the headers of a suspicious email and see the warning signs in plain language.',
+      navHere: 'Phishing Check', navOther: 'Domain Email Check: how well is a domain protected against fake senders? →',
+      exOta: 'Example: fake Booking.com payment (hotels / OTAs)', exM365: 'Example: fake Microsoft 365 login', exBank: 'Example: supplier bank-detail change',
       privacy: 'Private by design: this page runs only in your browser. Nothing you paste is sent anywhere or saved — it never leaves this device.',
       headersLabel: 'Email headers',
       headersHint: '(or the full email source — see “How do I get the headers?” below)',
@@ -205,21 +219,23 @@
       from: 'From', subject: 'Subject', auth: 'Authentication', hop: 'First external server', none: '—',
       pts: '{n} pts', pt: '{n} pt', infoOnly: 'info',
       empty: 'Please paste the email headers first.',
-      advice: 'If in doubt: do not click links, do not open attachments and do not reply. Check the reservation directly in the OTA extranet (typed in by hand) and forward the email to your IT or security contact.',
+      advice: 'If in doubt: do not click links, do not open attachments and do not reply. Check the request directly with the sender (a website you type in by hand, or a phone number you already know) and forward the email to your IT or security contact.',
       helpTitle: 'How do I get the headers?',
       helpIntro: 'Headers are the technical “envelope” of an email. Copy them and paste them into the first box. If you can copy the full source (all of it), paste that — then links and attachments are checked too.',
       helpOutlook: ['Open the email in its own window (double-click it).', 'Click File → Properties.', 'Copy everything in the “Internet headers” box (click in it, Ctrl+A, Ctrl+C).'],
       helpOwa: ['Open the email.', 'Click … (More actions) → View → View message details.', 'Copy all the text in the window (Ctrl+A, Ctrl+C).'],
       helpGmail: ['Open the email.', 'Click ⋮ (More) next to Reply → Show original.', 'Click “Copy to clipboard” and paste it here. This is the full source, so leave the second box empty.'],
       helpApple: ['Open the email.', 'Choose View → Message → Raw Source (Option+Cmd+U).', 'Copy everything (Cmd+A, Cmd+C) and paste it here.'],
-      settingsTitle: 'Settings: your hotel',
-      settingsIntro: 'Add your hotel’s name and email domain to detect emails that pretend to come from your own hotel or manager. Saved only in this browser.',
-      hotelName: 'Hotel name', hotelDomain: 'Hotel email domain', save: 'Save', saved: 'Saved in this browser.', notSaved: 'Could not save here (private mode?) — the setting works until you close the page.',
+      settingsTitle: 'Settings: your organisation',
+      settingsIntro: 'Add your organisation’s name (for example your hotel or company) and email domain to detect emails that pretend to come from your own organisation or manager. Saved only in this browser.',
+      hotelName: 'Organisation name', hotelDomain: 'Your email domain', save: 'Save', saved: 'Saved in this browser.', notSaved: 'Could not save here (private mode?) — the setting works until you close the page.',
       footer: 'Signals only, not a security product: a result never means that an email is “safe”. Check only emails you are allowed to handle. All examples are synthetic. Explanations in English and German.'
     },
     de: {
-      title: 'Hotel-Phishing-Check',
-      subtitle: 'Fügen Sie die Header einer verdächtigen E-Mail ein und sehen Sie die Warnzeichen in einfacher Sprache.',
+      title: 'Phishing-Check',
+      subtitle: 'Gefälschte E-Mails erkennen, bevor Sie klicken. Fügen Sie die Header einer verdächtigen E-Mail ein und sehen Sie die Warnzeichen in einfacher Sprache.',
+      navHere: 'Phishing-Check', navOther: 'Domain-E-Mail-Check: Wie gut ist eine Domain gegen gefälschte Absender geschützt? →',
+      exOta: 'Beispiel: gefälschte Booking.com-Zahlung (Hotels / OTAs)', exM365: 'Beispiel: gefälschte Microsoft-365-Anmeldung', exBank: 'Beispiel: geänderte Bankverbindung eines Lieferanten',
       privacy: 'Privat by Design: Diese Seite läuft nur in Ihrem Browser. Nichts, was Sie einfügen, wird gesendet oder gespeichert – es verlässt dieses Gerät nie.',
       headersLabel: 'E-Mail-Header',
       headersHint: '(oder der komplette Quelltext – siehe „Wie bekomme ich die Header?“ unten)',
@@ -234,16 +250,16 @@
       from: 'Von', subject: 'Betreff', auth: 'Authentifizierung', hop: 'Erster externer Server', none: '—',
       pts: '{n} Pkt.', pt: '{n} Pkt.', infoOnly: 'Info',
       empty: 'Bitte fügen Sie zuerst die E-Mail-Header ein.',
-      advice: 'Im Zweifel: keine Links anklicken, keine Anhänge öffnen und nicht antworten. Prüfen Sie die Reservierung direkt im OTA-Extranet (Adresse selbst eintippen) und leiten Sie die E-Mail an Ihre IT- oder Sicherheitskontaktperson weiter.',
+      advice: 'Im Zweifel: keine Links anklicken, keine Anhänge öffnen und nicht antworten. Prüfen Sie die Anfrage direkt beim Absender (Website selbst eintippen oder eine Ihnen bekannte Telefonnummer) und leiten Sie die E-Mail an Ihre IT- oder Sicherheitskontaktperson weiter.',
       helpTitle: 'Wie bekomme ich die Header?',
       helpIntro: 'Header sind der technische „Umschlag“ einer E-Mail. Kopieren Sie sie in das erste Feld. Wenn Sie den kompletten Quelltext kopieren können, fügen Sie diesen ein – dann werden auch Links und Anhänge geprüft.',
       helpOutlook: ['Öffnen Sie die E-Mail in einem eigenen Fenster (Doppelklick).', 'Klicken Sie auf Datei → Eigenschaften.', 'Kopieren Sie alles im Feld „Internetkopfzeilen“ (hineinklicken, Strg+A, Strg+C).'],
       helpOwa: ['Öffnen Sie die E-Mail.', 'Klicken Sie auf … (Weitere Aktionen) → Ansicht → Nachrichtendetails anzeigen.', 'Kopieren Sie den gesamten Text im Fenster (Strg+A, Strg+C).'],
       helpGmail: ['Öffnen Sie die E-Mail.', 'Klicken Sie neben „Antworten“ auf ⋮ (Mehr) → Original anzeigen.', 'Klicken Sie auf „In die Zwischenablage kopieren“ und fügen Sie es hier ein. Das ist der komplette Quelltext, das zweite Feld bleibt leer.'],
       helpApple: ['Öffnen Sie die E-Mail.', 'Wählen Sie Darstellung → E-Mail → Rohformat (Wahl+Cmd+U).', 'Alles kopieren (Cmd+A, Cmd+C) und hier einfügen.'],
-      settingsTitle: 'Einstellungen: Ihr Hotel',
-      settingsIntro: 'Geben Sie Namen und E-Mail-Domain Ihres Hotels ein, um E-Mails zu erkennen, die vorgeben, von Ihrem Hotel oder Ihrer Direktion zu kommen. Nur in diesem Browser gespeichert.',
-      hotelName: 'Hotelname', hotelDomain: 'E-Mail-Domain des Hotels', save: 'Speichern', saved: 'In diesem Browser gespeichert.', notSaved: 'Speichern nicht möglich (privater Modus?) – die Einstellung gilt, bis Sie die Seite schließen.',
+      settingsTitle: 'Einstellungen: Ihre Organisation',
+      settingsIntro: 'Geben Sie Namen (z. B. Ihr Hotel oder Ihre Firma) und E-Mail-Domain Ihrer Organisation ein, um E-Mails zu erkennen, die vorgeben, von Ihrer eigenen Organisation oder Ihrer Leitung zu kommen. Nur in diesem Browser gespeichert.',
+      hotelName: 'Name der Organisation', hotelDomain: 'Ihre E-Mail-Domain', save: 'Speichern', saved: 'In diesem Browser gespeichert.', notSaved: 'Speichern nicht möglich (privater Modus?) – die Einstellung gilt, bis Sie die Seite schließen.',
       footer: 'Nur Signale, kein Sicherheitsprodukt: Ein Ergebnis bedeutet nie, dass eine E-Mail „sicher“ ist. Prüfen Sie nur E-Mails, die Sie bearbeiten dürfen. Alle Beispiele sind erfunden. Erklärungen auf Englisch und Deutsch.'
     }
   };
@@ -363,7 +379,7 @@
     $('lang-de').addEventListener('click', function () { lang = 'de'; save(LANG_KEY, lang); applyLang(); });
     $('check').addEventListener('click', runCheck);
     $('example').addEventListener('click', function () {
-      $('headers').value = EXAMPLE_EMAIL;
+      $('headers').value = EXAMPLES[$('example-set').value] || EXAMPLES.ota;
       $('body').value = '';
       runCheck();
     });

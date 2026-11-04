@@ -1,0 +1,17 @@
+Return-Path: <bounce@mailrelay-77.test>
+Received: from mailrelay-77.test (unknown [198.51.100.45]) by mx1.grandpalm.test with ESMTP id 9a41; Tue, 03 Nov 2026 08:12:40 +0100
+Authentication-Results: mx1.grandpalm.test; spf=softfail smtp.mailfrom=mailrelay-77.test; dkim=none; dmarc=fail (p=NONE) header.from=micros0ft-365-support.test
+From: "Microsoft 365 Admin" <no-reply@micros0ft-365-support.test>
+To: reception@grandpalm.test
+Subject: Action required: your password expires today
+Date: Tue, 03 Nov 2026 08:12:31 +0100
+Message-ID: <a9a41@micros0ft-365-support.test>
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+<html><body>
+<p>Dear user,</p>
+<p>Your password expires today. Sign in to keep your current password and avoid losing access to your mailbox.</p>
+<p><a href="https://m365-verify.example.com/login?u=reception">https://login.microsoftonline.com/keep-password</a></p>
+<p>Microsoft 365 Security Team</p>
+</body></html>

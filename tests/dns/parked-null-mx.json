@@ -1,0 +1,103 @@
+{
+ "domain": "parked.test",
+ "note": "null MX, no SPF, no DMARC",
+ "answers": {
+  "parked.test|MX": {
+   "Status": 0,
+   "Question": [
+    {
+     "name": "parked.test",
+     "type": 15
+    }
+   ],
+   "Answer": [
+    {
+     "name": "parked.test",
+     "type": 15,
+     "TTL": 300,
+     "data": "0 ."
+    }
+   ]
+  },
+  "parked.test|TXT": {
+   "Status": 0,
+   "Question": [
+    {
+     "name": "parked.test",
+     "type": 16
+    }
+   ]
+  },
+  "_dmarc.parked.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "_dmarc.parked.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  },
+  "selector1._domainkey.parked.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "selector1._domainkey.parked.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  },
+  "selector2._domainkey.parked.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "selector2._domainkey.parked.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  },
+  "google._domainkey.parked.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "google._domainkey.parked.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  },
+  "k1._domainkey.parked.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "k1._domainkey.parked.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  },
+  "default._domainkey.parked.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "default._domainkey.parked.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  }
+ },
+ "expect": {
+  "verdict": "weak",
+  "findings": [
+   "mx-null",
+   "spf-missing",
+   "dmarc-missing"
+  ],
+  "steps": [
+   "parked"
+  ]
+ }
+}

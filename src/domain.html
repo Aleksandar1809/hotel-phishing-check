@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src https://cloudflare-dns.com https://dns.google; img-src data:; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Domain Email Check</title>
+<meta name="description" content="Domain Email Check — how well is a domain protected against fake emails in its name? Reads public SPF, DKIM, DMARC and MX records.">
+<style>
+  :root {
+    --bg: #f6f5f2; --card: #ffffff; --ink: #1d2327; --muted: #5d676e; --line: #dcdcd6;
+    --accent: #1f5f8b; --accent-ink: #ffffff;
+    --red: #c62828; --amber: #e0a100; --calm: #4f7f86;
+    --red-bg: #fdecea; --amber-bg: #fff6dc; --calm-bg: #e8f1f2;
+    --code: #f0efea;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #15191c; --card: #1e2428; --ink: #e8eaeb; --muted: #a2abb1; --line: #333b40;
+      --accent: #5aa3d6; --accent-ink: #0d1114;
+      --red: #ef5350; --amber: #f2b632; --calm: #7fb3ba;
+      --red-bg: #3a1f1f; --amber-bg: #3a3020; --calm-bg: #1f3033;
+      --code: #2a3135;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 16px; }
+  header { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin: 8px 0 12px; }
+  h1 { font-size: 1.6rem; margin: 0; letter-spacing: -0.01em; }
+  h2 { font-size: 1.1rem; margin: 0 0 8px; }
+  h3 { font-size: 1rem; margin: 12px 0 4px; }
+  .sub { color: var(--muted); margin: 2px 0 0; }
+  .lang { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .lang button { border: 0; background: var(--card); color: var(--ink); padding: 6px 12px; font: inherit; cursor: pointer; }
+  .lang button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+  .tools { font-size: 0.95rem; margin: -4px 0 12px; color: var(--muted); }
+  .tools a { color: var(--accent); }
+  .tools .here { font-weight: 600; color: var(--ink); }
+  .privacy { background: var(--calm-bg); border-left: 4px solid var(--calm); padding: 10px 12px; border-radius: 6px; margin-bottom: 14px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin-bottom: 14px; }
+  label { display: block; font-weight: 600; margin-bottom: 4px; }
+  .hint { color: var(--muted); font-size: 0.9rem; font-weight: 400; }
+  input[type=text] { width: 100%; font: inherit; padding: 9px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .row input { flex: 1 1 240px; }
+  button.btn { font: inherit; border-radius: 8px; padding: 9px 16px; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+  button.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
+  button.btn:disabled { opacity: 0.6; cursor: wait; }
+  button.btn:focus-visible, .lang button:focus-visible, summary:focus-visible, input:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+  summary { cursor: pointer; font-weight: 600; }
+  .status { margin-top: 10px; }
+  .status.error { color: var(--red); font-weight: 600; }
+  .verdict { display: flex; gap: 16px; align-items: center; padding: 14px; border-radius: 10px; }
+  .verdict.weak { background: var(--red-bg); }
+  .verdict.partial { background: var(--amber-bg); }
+  .verdict.strong { background: var(--calm-bg); }
+  .light { display: flex; flex-direction: column; gap: 6px; background: #22282c; padding: 8px; border-radius: 14px; flex: 0 0 auto; }
+  .lamp { width: 26px; height: 26px; border-radius: 50%; background: #3c4449; }
+  .verdict.weak .lamp.r { background: var(--red); box-shadow: 0 0 10px var(--red); }
+  .verdict.partial .lamp.a { background: var(--amber); box-shadow: 0 0 10px var(--amber); }
+  .verdict.strong .lamp.c { background: var(--calm); box-shadow: 0 0 10px var(--calm); }
+  .verdict-text { font-size: 1.25rem; font-weight: 700; overflow-wrap: anywhere; }
+  .verdict ul { margin: 6px 0 0; padding-left: 20px; }
+  .note { color: var(--muted); font-size: 0.92rem; margin-top: 8px; }
+  .findings { list-style: none; padding: 0; margin: 0; }
+  .findings li { border-left: 4px solid var(--line); padding: 6px 10px; margin-bottom: 8px; background: var(--bg); border-radius: 4px; }
+  .findings li.bad { border-left-color: var(--red); }
+  .findings li.warn { border-left-color: var(--amber); }
+  .findings li.good { border-left-color: var(--calm); }
+  .raw { display: block; margin-top: 4px; font: 12px/1.4 ui-monospace, Menlo, Consolas, monospace; background: var(--code); padding: 3px 6px; border-radius: 4px; overflow-wrap: anywhere; }
+  ol.steps { margin: 0; padding-left: 22px; }
+  ol.steps li { margin-bottom: 4px; }
+  .explain p { margin: 6px 0; }
+  footer { color: var(--muted); font-size: 0.9rem; margin: 18px 0 30px; }
+  .hidden { display: none; }
+  @media (max-width: 520px) {
+    h1 { font-size: 1.35rem; }
+    .verdict { align-items: flex-start; }
+    .lamp { width: 20px; height: 20px; }
+    .row .btn { flex: 1 1 auto; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1 data-i18n="title">Domain Email Check</h1>
+      <p class="sub" data-i18n="subtitle"></p>
+    </div>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" id="lang-en" aria-pressed="true">EN</button>
+      <button type="button" id="lang-de" aria-pressed="false">DE</button>
+    </div>
+  </header>
+
+  <nav class="tools"><a href="index.html" data-i18n="navOther"></a> · <span class="here" data-i18n="navHere"></span></nav>
+
+  <div class="privacy" data-i18n="privacy"></div>
+
+  <section class="card">
+    <label for="domain" data-i18n="domainLabel"></label>
+    <div class="row">
+      <input type="text" id="domain" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="url" placeholder="example.com">
+      <button type="button" class="btn primary" id="check" data-i18n="check"></button>
+    </div>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </section>
+
+  <section class="card hidden" id="result" aria-live="polite">
+    <div class="verdict" id="verdict">
+      <div class="light" aria-hidden="true"><span class="lamp r"></span><span class="lamp a"></span><span class="lamp c"></span></div>
+      <div>
+        <div class="verdict-text" id="verdict-text"></div>
+        <div class="hint" data-i18n="because"></div>
+        <ul id="reasons"></ul>
+      </div>
+    </div>
+    <p class="note" data-i18n="notSafe"></p>
+
+    <h2 data-i18n="found"></h2>
+    <ul class="findings" id="findings"></ul>
+
+    <h2 data-i18n="next"></h2>
+    <ol class="steps" id="steps"></ol>
+    <p class="note" id="resolver"></p>
+  </section>
+
+  <section class="card explain">
+    <details>
+      <summary data-i18n="explainTitle"></summary>
+      <h3>MX</h3><p data-i18n="exMx"></p>
+      <h3>SPF</h3><p data-i18n="exSpf"></p>
+      <h3>DKIM</h3><p data-i18n="exDkim"></p>
+      <h3>DMARC</h3><p data-i18n="exDmarc"></p>
+      <h3 data-i18n="exRiskTitle"></h3><p data-i18n="exRisk"></p>
+    </details>
+  </section>
+
+  <footer>
+    <p data-i18n="footer"></p>
+  </footer>
+</div>
+
+<script>
+/*__DNSCHECK__*/
+</script>
+<script>
+(function () {
+  'use strict';
+  var DC = window.DomainCheck;
+
+  var T = {
+    en: {
+      title: 'Domain Email Check',
+      subtitle: 'How well is a domain protected against fake emails sent in its name?',
+      navHere: 'Domain Email Check', navOther: '← Phishing Check: check a suspicious email',
+      privacy: 'Only the domain name you type is sent to a public DNS resolver (Cloudflare, or Google if Cloudflare does not answer). Nothing is stored, and there is no analytics.',
+      domainLabel: 'Domain (for example the part after @ in an email address)',
+      check: 'Check',
+      checking: 'Asking public DNS…',
+      invalid: 'Please type a domain name, for example example.com.',
+      network: 'The DNS resolvers could not be reached. Check your internet connection and try again.',
+      nxdomain: 'This domain does not exist in DNS. Check the spelling.',
+      because: 'Why:',
+      notSafe: 'This rates only the published anti-spoofing records. It never means that email from this domain is safe, and it does not check the mailbox, the people or the content.',
+      found: 'What the DNS records say',
+      next: 'What to do next',
+      resolver: 'Answered by: {r}. Checked: {d}.',
+      explainTitle: 'What do MX, SPF, DKIM and DMARC mean?',
+      exMx: 'The MX record says which servers receive email for the domain. It has nothing to do with spoofing, but it shows who runs the mail (for example Microsoft 365 or Google).',
+      exSpf: 'SPF is a public list of the servers that are allowed to send email for the domain. Receivers compare the sending server with this list.',
+      exDkim: 'DKIM is a digital signature on each email. The public key sits in DNS under a “selector” name. This page only tries five common selectors, so “not found” does not prove that DKIM is missing.',
+      exDmarc: 'DMARC tells receivers what to do when an email uses the domain in the From address but fails SPF and DKIM: nothing (p=none), spam folder (p=quarantine) or refuse it (p=reject). It also sends reports to the owner.',
+      exRiskTitle: 'What this means for fake emails',
+      exRisk: 'Without DMARC, or with p=none, anyone can send email that shows this domain in the From address, and many inboxes will deliver it. With p=quarantine or p=reject, exact fakes are blocked — but lookalike domains (like examp1e.com) are not, so staff still need to check the sender.',
+      footer: 'Signals only, not a security product: “Strong” never means safe. Results depend on public DNS at the moment of the check. Explanations in English and German.'
+    },
+    de: {
+      title: 'Domain-E-Mail-Check',
+      subtitle: 'Wie gut ist eine Domain gegen gefälschte E-Mails in ihrem Namen geschützt?',
+      navHere: 'Domain-E-Mail-Check', navOther: '← Phishing-Check: verdächtige E-Mail prüfen',
+      privacy: 'Nur der eingegebene Domainname wird an einen öffentlichen DNS-Resolver gesendet (Cloudflare, oder Google, wenn Cloudflare nicht antwortet). Nichts wird gespeichert, keine Analyse-Tools.',
+      domainLabel: 'Domain (z. B. der Teil nach dem @ einer E-Mail-Adresse)',
+      check: 'Prüfen',
+      checking: 'Öffentliches DNS wird abgefragt…',
+      invalid: 'Bitte geben Sie einen Domainnamen ein, z. B. example.com.',
+      network: 'Die DNS-Resolver sind nicht erreichbar. Prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.',
+      nxdomain: 'Diese Domain existiert im DNS nicht. Prüfen Sie die Schreibweise.',
+      because: 'Warum:',
+      notSafe: 'Bewertet werden nur die veröffentlichten Einträge gegen gefälschte Absender. Das bedeutet nie, dass E-Mails dieser Domain sicher sind; Postfach, Personen und Inhalte werden nicht geprüft.',
+      found: 'Was die DNS-Einträge sagen',
+      next: 'Nächste Schritte',
+      resolver: 'Antwort von: {r}. Geprüft: {d}.',
+      explainTitle: 'Was bedeuten MX, SPF, DKIM und DMARC?',
+      exMx: 'Der MX-Eintrag nennt die Server, die E-Mails für die Domain empfangen. Mit Fälschungen hat er nichts zu tun, zeigt aber, wer die E-Mails betreibt (z. B. Microsoft 365 oder Google).',
+      exSpf: 'SPF ist eine öffentliche Liste der Server, die für die Domain E-Mails senden dürfen. Empfänger vergleichen den sendenden Server mit dieser Liste.',
+      exDkim: 'DKIM ist eine digitale Signatur auf jeder E-Mail. Der öffentliche Schlüssel liegt im DNS unter einem „Selektor“-Namen. Diese Seite prüft nur fünf übliche Selektoren – „nicht gefunden“ beweist also nicht, dass DKIM fehlt.',
+      exDmarc: 'DMARC sagt Empfängern, was mit E-Mails passieren soll, die die Domain im Absender nutzen, aber SPF und DKIM nicht bestehen: nichts (p=none), Spam-Ordner (p=quarantine) oder ablehnen (p=reject). Außerdem erhält der Inhaber Berichte.',
+      exRiskTitle: 'Was das für gefälschte E-Mails bedeutet',
+      exRisk: 'Ohne DMARC oder mit p=none kann jeder E-Mails senden, die diese Domain im Absender zeigen, und viele Postfächer stellen sie zu. Mit p=quarantine oder p=reject werden exakte Fälschungen blockiert – ähnlich aussehende Domains (z. B. examp1e.com) aber nicht, deshalb muss der Absender trotzdem geprüft werden.',
+      footer: 'Nur Signale, kein Sicherheitsprodukt: „Stark“ bedeutet nie sicher. Das Ergebnis hängt vom öffentlichen DNS zum Zeitpunkt der Prüfung ab. Erklärungen auf Englisch und Deutsch.'
+    }
+  };
+
+  // Nothing is stored: no localStorage, no cookies. Language lives only in this page view.
+  var lang = 'en';
+  var last = null;
+  var lastError = null;
+  var busy = false;
+
+  function $(id) { return document.getElementById(id); }
+  function t(key) { return T[lang][key]; }
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  function applyLang() {
+    document.documentElement.lang = lang;
+    document.title = t('title');
+    $('lang-en').setAttribute('aria-pressed', String(lang === 'en'));
+    $('lang-de').setAttribute('aria-pressed', String(lang === 'de'));
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (e) {
+      e.textContent = t(e.getAttribute('data-i18n'));
+    });
+    if (lastError) showStatus(t(lastError), true);
+    else if (busy) showStatus(t('checking'), false);
+    if (last) render(last);
+  }
+
+  function showStatus(text, isError) {
+    var s = $('status');
+    s.textContent = text || '';
+    s.className = 'status' + (isError ? ' error' : '');
+  }
+
+  function render(res) {
+    $('verdict').className = 'verdict ' + res.verdict;
+    $('verdict-text').textContent = res.verdictText[lang] + ' — ' + res.domain;
+
+    var reasons = $('reasons');
+    reasons.textContent = '';
+    res.reasons.forEach(function (r) { reasons.appendChild(el('li', '', r.text[lang])); });
+
+    var list = $('findings');
+    list.textContent = '';
+    var raw = { spf: res.records.spf.record, dmarc: res.records.dmarc.record };
+    var shownRaw = {};
+    res.findings.forEach(function (f) {
+      var li = el('li', f.level);
+      li.appendChild(document.createTextNode(f.text[lang]));
+      var k = f.id.split('-')[0];
+      if (raw[k] && !shownRaw[k]) { shownRaw[k] = true; li.appendChild(el('code', 'raw', raw[k])); }
+      list.appendChild(li);
+    });
+
+    var steps = $('steps');
+    steps.textContent = '';
+    res.nextSteps.forEach(function (s) { steps.appendChild(el('li', '', s.text[lang])); });
+
+    var used = [];
+    ['mx', 'spf', 'dmarc'].forEach(function (k) {
+      var r = res.answers && res.answers[k] && res.answers[k].resolver;
+      if (r && used.indexOf(r) < 0) used.push(r);
+    });
+    $('resolver').textContent = t('resolver').replace('{r}', used.join(', ') || '—').replace('{d}', res.checkedAt.toLocaleString(lang));
+    $('result').classList.remove('hidden');
+  }
+
+  function runCheck() {
+    if (busy) return;
+    var input = $('domain').value;
+    var domain = DC.normalizeDomain(input);
+    lastError = null;
+    if (!domain) { lastError = 'invalid'; showStatus(t('invalid'), true); return; }
+    $('domain').value = domain;
+    busy = true;
+    $('check').disabled = true;
+    showStatus(t('checking'), false);
+    DC.lookupAll(domain).then(function (answers) {
+      var statuses = ['mx', 'spf', 'dmarc'].map(function (k) { return answers[k].status; });
+      if (statuses.every(function (s) { return s === 'error'; })) throw new Error('network');
+      if (answers.mx.status === 'nxdomain' && answers.spf.status === 'nxdomain') throw new Error('nxdomain');
+      var res = DC.evaluate(domain, answers);
+      res.answers = answers;
+      res.checkedAt = new Date();
+      last = res;
+      showStatus('', false);
+      render(res);
+    }).catch(function (err) {
+      lastError = err && (err.message === 'nxdomain' || err.message === 'network') ? err.message : 'network';
+      last = null;
+      $('result').classList.add('hidden');
+      showStatus(t(lastError), true);
+    }).then(function () {
+      busy = false;
+      $('check').disabled = false;
+    });
+  }
+
+  $('lang-en').addEventListener('click', function () { lang = 'en'; applyLang(); });
+  $('lang-de').addEventListener('click', function () { lang = 'de'; applyLang(); });
+  $('check').addEventListener('click', runCheck);
+  $('domain').addEventListener('keydown', function (e) { if (e.key === 'Enter') runCheck(); });
+  applyLang();
+})();
+</script>
+</body>
+</html>

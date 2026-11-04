@@ -1,0 +1,127 @@
+{
+ "domain": "nospf.test",
+ "note": "reject but no SPF",
+ "answers": {
+  "nospf.test|MX": {
+   "Status": 0,
+   "Question": [
+    {
+     "name": "nospf.test",
+     "type": 15
+    }
+   ],
+   "Answer": [
+    {
+     "name": "nospf.test",
+     "type": 15,
+     "TTL": 300,
+     "data": "10 mx.example.com."
+    }
+   ]
+  },
+  "nospf.test|TXT": {
+   "Status": 0,
+   "Question": [
+    {
+     "name": "nospf.test",
+     "type": 16
+    }
+   ],
+   "Answer": [
+    {
+     "name": "nospf.test",
+     "type": 16,
+     "TTL": 300,
+     "data": "\"google-site-verification=xyz\""
+    }
+   ]
+  },
+  "_dmarc.nospf.test|TXT": {
+   "Status": 0,
+   "Question": [
+    {
+     "name": "_dmarc.nospf.test",
+     "type": 16
+    }
+   ],
+   "Answer": [
+    {
+     "name": "_dmarc.nospf.test",
+     "type": 16,
+     "TTL": 300,
+     "data": "\"v=DMARC1; p=reject; rua=mailto:x@nospf.test\""
+    }
+   ]
+  },
+  "selector1._domainkey.nospf.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "selector1._domainkey.nospf.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  },
+  "selector2._domainkey.nospf.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "selector2._domainkey.nospf.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  },
+  "google._domainkey.nospf.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "google._domainkey.nospf.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  },
+  "k1._domainkey.nospf.test|TXT": {
+   "Status": 0,
+   "Question": [
+    {
+     "name": "k1._domainkey.nospf.test",
+     "type": 16
+    }
+   ],
+   "Answer": [
+    {
+     "name": "k1._domainkey.nospf.test",
+     "type": 16,
+     "TTL": 300,
+     "data": "\"v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsynthetic\""
+    }
+   ]
+  },
+  "default._domainkey.nospf.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "default._domainkey.nospf.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  }
+ },
+ "expect": {
+  "verdict": "partial",
+  "findings": [
+   "dmarc-reject",
+   "spf-missing"
+  ],
+  "reasons": [
+   "spf-missing"
+  ],
+  "steps": [
+   "spf-add"
+  ]
+ }
+}

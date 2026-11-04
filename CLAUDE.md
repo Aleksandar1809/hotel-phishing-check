@@ -1,15 +1,17 @@
-# Hotel Phishing Check
+# Phishing Check — spot fake emails before you click
 
 ## Goal
-Build one web page that a hotel receptionist uses to check a suspicious email. The receptionist pastes the email's headers, and optionally its text, and sees the warning signs in plain language.
-Hotels are heavily targeted by fake Booking.com and OTA emails.
-Purpose: a portfolio piece for an email-security and tech-sales job search.
+Two linked, self-contained web pages (portfolio piece for an email-security and tech-sales job search):
+1. **Phishing Check** (src/ui.html → docs/index.html): anyone who handles email at work pastes a suspicious email's headers, and optionally its text, and sees the warning signs in plain language.
+   Example sets: hotels / OTAs (fake Booking.com etc., the original focus), fake Microsoft 365 login, supplier bank-detail change.
+2. **Domain Email Check** (src/domain.html + src/dnscheck.js → docs/domain.html): type a domain, see how well it is protected against spoofing (SPF, DKIM, DMARC, MX).
 
 ## Owner
 Aleksandar (short form "Aco") is not a developer but is very tech-literate. He is a former hotel Front Office Manager.
 Talk to him in Bosnian/Serbian, in at most 2 short sentences per explanation.
 
 ## Non-negotiable rules
+These apply to Phishing Check; the Domain Email Check exceptions are listed in its own section below.
 - **Runs 100% in the browser.** No network calls, no external fonts, CDNs or analytics. Pasted content never leaves the device, and the UI says so.
 - **Never label an email "safe".** The only verdicts are:
   - "Many warning signs"
@@ -17,8 +19,9 @@ Talk to him in Bosnian/Serbian, in at most 2 short sentences per explanation.
   - "No warning signs found — this does not mean the email is safe"
 - **Defensive only.** No real guest emails or real personal data anywhere in the repo. All test emails are synthetic, using example.com or .test domains and invented names.
 - **Plain technology.** Plain HTML, CSS and vanilla JavaScript, with Node built-ins only: no frameworks, no npm packages.
-  - Source lives in src/: analyzer.js works in both Node and the browser, plus ui.html.
-  - build.js inlines both into one self-contained file, docs/index.html.
+  - Source lives in src/: analyzer.js and dnscheck.js work in both Node and the browser, plus ui.html and domain.html.
+  - build.js inlines them into two self-contained files, docs/index.html and docs/domain.html, and fails on any external resource or unexpected connect-src.
+- The two pages link to each other.
 
 ## Working rules (save tokens)
 - Never print whole files into the conversation. Report counts and short samples only.
@@ -77,3 +80,14 @@ Each check produces a signal with a one-sentence explanation in English and Germ
      - lookalike domains
      - why hotels are targeted
    - Also in LEARN.md: 8 questions an email-security SDR gets in interviews, with short answers.
+
+## Domain Email Check (docs/domain.html)
+- **Only network calls allowed:** public DNS-over-HTTPS JSON, https://cloudflare-dns.com/dns-query first, fallback https://dns.google/resolve. CSP connect-src lists exactly these two. Only the domain name is sent (no cookies, no referrer).
+- **Nothing is stored** (no localStorage, no cookies), no analytics. The UI says so.
+- Queries: MX, SPF (TXT), DMARC (_dmarc TXT), DKIM only at selectors selector1, selector2, google, k1, default, labelled "found at a common selector" / "not found at common selectors (may still exist)".
+- **Never "safe".** Verdicts: "Strong / Partial / Weak protection against spoofing", each with reasons. Rules in evaluate() in src/dnscheck.js and in the README. DKIM never changes the verdict.
+- Plain English with a German toggle: what each record means, what it means for spoofing risk (DMARC missing or p=none = anyone can send mail that looks like yours), and a "what to do next" list.
+- Tests: tests/dns.js with recorded-format DNS answers in tests/dns/*.json and a fake fetch. No live network in tests. Synthetic .test / example.com domains only.
+
+## Tests
+- node tests/run.js (Phishing Check: 14 emails + unit checks), node tests/dns.js (Domain Email Check), node build.js. All must pass before committing.

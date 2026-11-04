@@ -9,6 +9,8 @@
     "p06-german-hrs-ip.eml": { "verdict": "many", "signals": ["brand-display", "lookalike-extra", "link-ip", "link-punycode", "content-payment", "content-cancellation", "auth-spf", "auth-dkim", "auth-dmarc"], "absent": [], "firstHop": "203.0.113.9" },
     "p07-invoice-attachment.eml": { "verdict": "many", "signals": ["attachment-risky", "attachment-password", "mismatch-reply-to", "mismatch-return-path", "auth-spf", "auth-dmarc"], "absent": ["brand-display"] },
     "p08-gm-fraud.eml": { "verdict": "many", "signals": ["brand-display", "mismatch-reply-to", "content-payment"], "absent": ["auth-dmarc"] },
+    "p09-m365-login.eml": { "verdict": "many", "signals": ["brand-display", "lookalike-swap", "link-text-mismatch", "content-credentials", "auth-dmarc"], "absent": ["content-bank-change"], "firstHop": "198.51.100.45" },
+    "p10-bank-change.eml": { "verdict": "many", "signals": ["content-bank-change", "mismatch-reply-to", "content-payment"], "absent": ["auth-spf", "auth-dkim", "auth-dmarc", "brand-display"], "firstHop": "192.0.2.77" },
     "l01-guest-inquiry.eml": { "verdict": "none", "signals": ["brand-subject"], "absent": ["brand-display", "link-unrelated", "auth-spf", "auth-dkim", "auth-dmarc"] },
     "l02-supplier-order.eml": { "verdict": "none", "signals": [], "absent": ["link-unrelated", "mismatch-return-path", "brand-subject"], "firstHop": "203.0.113.61" },
     "l03-internal-arrivals.eml": { "verdict": "none", "signals": [], "absent": ["brand-display", "brand-subject", "link-unrelated", "info-first-hop"] },

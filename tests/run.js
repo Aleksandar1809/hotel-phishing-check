@@ -87,6 +87,9 @@ eq('display-name address trick', signalIds('Authentication-Results: mx.test; spf
 eq('german suspension', signalIds(authOk, 'Ihr Konto wird gesperrt, wenn Sie nicht reagieren.').indexOf('content-suspension') >= 0, true);
 eq('german clickfix', signalIds(authOk, 'Drücken Sie Windows-Taste + R und dann Strg + V und Enter.').indexOf('content-clickfix') >= 0, true);
 eq('complaint without link', signalIds(authOk, 'There was a guest complaint about noise.').indexOf('content-complaint-link'), -1);
+eq('german bank change', signalIds(authOk, 'Bitte beachten Sie unsere neue Bankverbindung ab sofort.').indexOf('content-bank-change') >= 0, true);
+eq('german password expiry', signalIds(authOk, 'Ihr Kennwort läuft bald ab.').indexOf('content-credentials') >= 0, true);
+eq('word outlook is not a brand', signalIds('Authentication-Results: mx.test; spf=pass; dkim=pass; dmarc=pass\nFrom: "Sales" <sales@example.com>\nSubject: Weekly outlook').indexOf('brand-subject'), -1);
 eq('no headers', PC.analyze('', 'hello', settings).verdict, 'none');
 eq('never says safe', Object.keys(PC.VERDICTS).every(function (k) { return !/\bsafe\b/i.test(PC.VERDICTS[k].en.replace('does not mean the email is safe', '')); }), true);
 

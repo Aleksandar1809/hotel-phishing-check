@@ -1,0 +1,134 @@
+{
+ "domain": "two-spf.test",
+ "note": "two SPF records and two DMARC records",
+ "answers": {
+  "two-spf.test|MX": {
+   "Status": 0,
+   "Question": [
+    {
+     "name": "two-spf.test",
+     "type": 15
+    }
+   ],
+   "Answer": [
+    {
+     "name": "two-spf.test",
+     "type": 15,
+     "TTL": 300,
+     "data": "10 mx.example.com."
+    }
+   ]
+  },
+  "two-spf.test|TXT": {
+   "Status": 0,
+   "Question": [
+    {
+     "name": "two-spf.test",
+     "type": 16
+    }
+   ],
+   "Answer": [
+    {
+     "name": "two-spf.test",
+     "type": 16,
+     "TTL": 300,
+     "data": "\"v=spf1 -all\""
+    },
+    {
+     "name": "two-spf.test",
+     "type": 16,
+     "TTL": 300,
+     "data": "\"v=spf1 include:x.example.com ~all\""
+    }
+   ]
+  },
+  "_dmarc.two-spf.test|TXT": {
+   "Status": 0,
+   "Question": [
+    {
+     "name": "_dmarc.two-spf.test",
+     "type": 16
+    }
+   ],
+   "Answer": [
+    {
+     "name": "_dmarc.two-spf.test",
+     "type": 16,
+     "TTL": 300,
+     "data": "\"v=DMARC1; p=reject\""
+    },
+    {
+     "name": "_dmarc.two-spf.test",
+     "type": 16,
+     "TTL": 300,
+     "data": "\"v=DMARC1; p=none\""
+    }
+   ]
+  },
+  "selector1._domainkey.two-spf.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "selector1._domainkey.two-spf.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  },
+  "selector2._domainkey.two-spf.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "selector2._domainkey.two-spf.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  },
+  "google._domainkey.two-spf.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "google._domainkey.two-spf.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  },
+  "k1._domainkey.two-spf.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "k1._domainkey.two-spf.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  },
+  "default._domainkey.two-spf.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "default._domainkey.two-spf.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  }
+ },
+ "expect": {
+  "verdict": "weak",
+  "findings": [
+   "dmarc-invalid",
+   "spf-multiple"
+  ],
+  "reasons": [
+   "dmarc-invalid",
+   "spf-multiple"
+  ],
+  "steps": [
+   "dmarc-fix",
+   "spf-merge"
+  ]
+ }
+}
