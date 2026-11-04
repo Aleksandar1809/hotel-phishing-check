@@ -1,0 +1,124 @@
+{
+ "domain": "open-door.test",
+ "note": "no DMARC (NXDOMAIN at _dmarc), SPF +all, revoked DKIM key",
+ "answers": {
+  "open-door.test|MX": {
+   "Status": 0,
+   "Question": [
+    {
+     "name": "open-door.test",
+     "type": 15
+    }
+   ],
+   "Answer": [
+    {
+     "name": "open-door.test",
+     "type": 15,
+     "TTL": 300,
+     "data": "10 mx.example.com."
+    }
+   ]
+  },
+  "open-door.test|TXT": {
+   "Status": 0,
+   "Question": [
+    {
+     "name": "open-door.test",
+     "type": 16
+    }
+   ],
+   "Answer": [
+    {
+     "name": "open-door.test",
+     "type": 16,
+     "TTL": 300,
+     "data": "\"v=spf1 +all\""
+    }
+   ]
+  },
+  "_dmarc.open-door.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "_dmarc.open-door.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  },
+  "selector1._domainkey.open-door.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "selector1._domainkey.open-door.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  },
+  "selector2._domainkey.open-door.test|TXT": {
+   "Status": 0,
+   "Question": [
+    {
+     "name": "selector2._domainkey.open-door.test",
+     "type": 16
+    }
+   ],
+   "Answer": [
+    {
+     "name": "selector2._domainkey.open-door.test",
+     "type": 16,
+     "TTL": 300,
+     "data": "\"v=DKIM1; k=rsa; p=\""
+    }
+   ]
+  },
+  "google._domainkey.open-door.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "google._domainkey.open-door.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  },
+  "k1._domainkey.open-door.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "k1._domainkey.open-door.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  },
+  "default._domainkey.open-door.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "default._domainkey.open-door.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  }
+ },
+ "expect": {
+  "verdict": "weak",
+  "findings": [
+   "dmarc-missing",
+   "spf-pass-all",
+   "dkim-not-found",
+   "dkim-revoked"
+  ],
+  "reasons": [
+   "dmarc-missing",
+   "spf-pass-all"
+  ],
+  "steps": [
+   "dmarc-add",
+   "spf-tighten"
+  ]
+ }
+}

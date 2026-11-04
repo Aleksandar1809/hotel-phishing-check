@@ -1,0 +1,132 @@
+{
+ "domain": "monitor-only.test",
+ "note": "p=none, too many SPF lookups",
+ "answers": {
+  "monitor-only.test|MX": {
+   "Status": 0,
+   "Question": [
+    {
+     "name": "monitor-only.test",
+     "type": 15
+    }
+   ],
+   "Answer": [
+    {
+     "name": "monitor-only.test",
+     "type": 15,
+     "TTL": 300,
+     "data": "10 mx.example.com."
+    }
+   ]
+  },
+  "monitor-only.test|TXT": {
+   "Status": 0,
+   "Question": [
+    {
+     "name": "monitor-only.test",
+     "type": 16
+    }
+   ],
+   "Answer": [
+    {
+     "name": "monitor-only.test",
+     "type": 16,
+     "TTL": 300,
+     "data": "\"v=spf1 include:a.example.com include:b.example.com include:c.example.com include:d.example.com include:e.example.com include:f.example.com include:g.example.com include:h.example.com include:i.example.com include:j.example.com include:k.example.com ~all\""
+    }
+   ]
+  },
+  "_dmarc.monitor-only.test|TXT": {
+   "Status": 0,
+   "Question": [
+    {
+     "name": "_dmarc.monitor-only.test",
+     "type": 16
+    }
+   ],
+   "Answer": [
+    {
+     "name": "_dmarc.monitor-only.test",
+     "type": 16,
+     "TTL": 300,
+     "data": "\"v=DMARC1; p=none\""
+    }
+   ]
+  },
+  "selector1._domainkey.monitor-only.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "selector1._domainkey.monitor-only.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  },
+  "selector2._domainkey.monitor-only.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "selector2._domainkey.monitor-only.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  },
+  "google._domainkey.monitor-only.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "google._domainkey.monitor-only.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  },
+  "k1._domainkey.monitor-only.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "k1._domainkey.monitor-only.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  },
+  "default._domainkey.monitor-only.test|TXT": {
+   "Status": 0,
+   "Question": [
+    {
+     "name": "default._domainkey.monitor-only.test",
+     "type": 16
+    }
+   ],
+   "Answer": [
+    {
+     "name": "default._domainkey.monitor-only.test",
+     "type": 16,
+     "TTL": 300,
+     "data": "\"v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsynthetic\""
+    }
+   ]
+  }
+ },
+ "expect": {
+  "verdict": "weak",
+  "findings": [
+   "dmarc-none",
+   "dmarc-no-rua",
+   "spf-soft",
+   "spf-lookups"
+  ],
+  "reasons": [
+   "dmarc-none",
+   "spf-lookups"
+  ],
+  "steps": [
+   "dmarc-enforce",
+   "dmarc-rua",
+   "spf-lookups"
+  ]
+ }
+}

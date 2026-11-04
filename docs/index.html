@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
-<title>Hotel Phishing Check</title>
+<title>Phishing Check</title>
+<meta name="description" content="Phishing Check — spot fake emails before you click. Runs only in your browser.">
 <style>
   :root {
     --bg: #f6f5f2; --card: #ffffff; --ink: #1d2327; --muted: #5d676e; --line: #dcdcd6;
@@ -44,6 +45,10 @@
   .field { margin-bottom: 12px; }
   .row { display: flex; flex-wrap: wrap; gap: 8px; }
   .row > .field { flex: 1 1 220px; }
+  .tools { font-size: 0.95rem; margin: -4px 0 12px; color: var(--muted); }
+  .tools a { color: var(--accent); }
+  .tools .here { font-weight: 600; color: var(--ink); }
+  select { font: inherit; border-radius: 8px; padding: 8px 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); max-width: 100%; }
   button.btn { font: inherit; border-radius: 8px; padding: 9px 16px; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
   button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
   button.btn:focus-visible, .lang button:focus-visible, summary:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
@@ -96,7 +101,7 @@
 <div class="wrap">
   <header>
     <div>
-      <h1 data-i18n="title">Hotel Phishing Check</h1>
+      <h1 data-i18n="title">Phishing Check</h1>
       <p class="sub" data-i18n="subtitle"></p>
     </div>
     <div class="lang" role="group" aria-label="Language">
@@ -104,6 +109,8 @@
       <button type="button" id="lang-de" aria-pressed="false">DE</button>
     </div>
   </header>
+
+  <nav class="tools"><span class="here" data-i18n="navHere"></span> · <a href="domain.html" data-i18n="navOther"></a></nav>
 
   <div class="privacy" data-i18n="privacy"></div>
 
@@ -118,6 +125,11 @@
     </div>
     <div class="row">
       <button type="button" class="btn primary" id="check" data-i18n="check"></button>
+      <select id="example-set" aria-label="Example">
+        <option value="ota" data-i18n="exOta"></option>
+        <option value="m365" data-i18n="exM365"></option>
+        <option value="bank" data-i18n="exBank"></option>
+      </select>
       <button type="button" class="btn" id="example" data-i18n="example"></button>
       <button type="button" class="btn" id="clear" data-i18n="clear"></button>
     </div>
@@ -181,7 +193,7 @@
 
 <script>
 /*
- * Hotel Phishing Check - analyzer.
+ * Phishing Check - analyzer.
  * Works in Node (require('./analyzer.js')) and in the browser (window.PhishCheck).
  * Pure functions only: no network calls, no storage, no dependencies.
  */
@@ -226,7 +238,12 @@
     { name: 'Trip.com', match: /\btrip\s?\.\s?com\b/i,
       domains: ['trip.com', 'ctrip.com'], names: ['tripcom', 'ctrip'], contains: ['tripcom'] },
     { name: 'HRS', match: /\bHRS\b/,
-      domains: ['hrs.com', 'hrs.de'], names: ['hrs'], contains: [] }
+      domains: ['hrs.com', 'hrs.de'], names: ['hrs'], contains: [] },
+    // Generic example set (not hotel-specific). Shared hosting such as sharepoint.com is left out
+    // on purpose, because anyone can create a tenant there.
+    { name: 'Microsoft 365', match: /\bmicrosoft\b|\boffice\s?365\b|\bM365\b/i,
+      domains: ['microsoft.com', 'microsoftonline.com', 'office.com', 'office365.com', 'outlook.com', 'live.com'],
+      names: ['microsoft', 'office365', 'microsoftonline'], contains: ['microsoft', 'office365'] }
   ];
 
   var SHORTENERS = [
@@ -270,6 +287,8 @@
     'content-complaint-link': 3,
     'content-cancellation': 2,
     'content-clickfix': 5,
+    'content-credentials': 3,
+    'content-bank-change': 4,
     'attachment-risky': 4,
     'attachment-password': 3,
     'info-first-hop': 0
@@ -293,6 +312,8 @@
     'content-complaint': /guest complaint|complaint (from|by) (a|your|the) guest|guest (has )?(reported|complained|claims)|negative review|gästebeschwerde|beschwerde (eines|von einem|des) gast|gast hat sich beschwert/i,
     'content-cancellation': /(reservation|booking)s? (will|would) be (automatically )?cancel+ed|(automatically )?cancel+ed (unless|if you do not|if not|within)|(reservierung|buchung) wird (automatisch )?(storniert|annulliert)|(automatisch|sonst) storniert/i,
     'content-clickfix': /win(dows)?(\s*-?\s*(key|taste))?\s*\+\s*r\b|press (the )?windows key|ctrl\s*\+\s*v[\s\S]{0,40}enter|paste (the|this) (command|code)|run dialog|powershell|mshta|cmd\.exe|ausführen-dialog|befehl einfügen|strg\s*\+\s*v[\s\S]{0,40}(enter|eingabe)/i,
+    'content-credentials': /(your )?password (will )?(expire|expires|expired|has expired)|(re-?)?(verify|confirm|validate) (your )?(account|mailbox|e-?mail|identity|login|credentials)|sign in (again )?to (keep|continue|avoid|restore|retain|view)|mailbox (is )?(full|storage|quota)|(storage|quota) (is )?(full|exceeded|almost full)|(shared|secure) document (is )?waiting|kennwort läuft (bald )?ab|passwort läuft (bald )?ab|(konto|postfach|identität) (bestätigen|verifizieren)|melden sie sich (erneut )?an, um|postfach (ist )?voll|speicher(platz)? (ist )?voll/i,
+    'content-bank-change': /(new|updated|changed|change (of|to) (our|the))( bank)? (bank (account|details)|account details|iban|banking details|payment details)|(bank (account|details)|banking details|iban) (has|have) (been )?(changed|updated)|(update|change) (the |our )?(bank|banking|iban|payment) (details|account|information)|(use|pay (in)?to) (the |our |this )?new (account|iban)|neue (bankverbindung|kontoverbindung|iban|kontodaten)|(bankverbindung|kontoverbindung|iban) (hat sich )?(geändert|aktualisiert)|geänderte (bankverbindung|kontoverbindung)/i,
     'attachment-password': /(password|passwort|kennwort)[^.\n]{0,60}(zip|rar|7z|archive|archiv|attachment|anhang|file|datei)|(zip|rar|7z|archive|archiv|attachment|anhang|file|datei)[^.\n]{0,60}(password|passwort|kennwort)/i
   };
 
@@ -438,8 +459,8 @@
     },
     'content-payment': {
       title: { en: 'Payment or card request', de: 'Zahlungs- oder Kartenaufforderung' },
-      en: 'The text asks for an urgent payment or for card details to be verified, a classic fake-OTA trick.',
-      de: 'Der Text fordert eine dringende Zahlung oder die Bestätigung von Kartendaten – ein klassischer Trick gefälschter OTA-E-Mails.'
+      en: 'The text asks for an urgent payment or for card details to be verified, a classic trick in fake OTA and supplier emails.',
+      de: 'Der Text fordert eine dringende Zahlung oder die Bestätigung von Kartendaten – ein klassischer Trick gefälschter OTA- und Lieferanten-E-Mails.'
     },
     'content-suspension': {
       title: { en: 'Account suspension threat', de: 'Drohung mit Kontosperrung' },
@@ -460,6 +481,16 @@
       title: { en: '“ClickFix” instructions', de: '„ClickFix“-Anleitung' },
       en: 'The email asks you to press Win+R or paste a command — never do this, it installs malware (the “ClickFix” trick).',
       de: 'Die E-Mail fordert Sie auf, Win+R zu drücken oder einen Befehl einzufügen – tun Sie das nie, so wird Schadsoftware installiert (der „ClickFix“-Trick).'
+    },
+    'content-credentials': {
+      title: { en: 'Login or password request', de: 'Anmelde- oder Passwortaufforderung' },
+      en: 'The text pushes you to sign in, verify your account or renew a password, the typical bait for a fake login page.',
+      de: 'Der Text drängt Sie, sich anzumelden, Ihr Konto zu bestätigen oder ein Passwort zu erneuern – der typische Köder für eine gefälschte Anmeldeseite.'
+    },
+    'content-bank-change': {
+      title: { en: 'Changed bank details', de: 'Geänderte Bankverbindung' },
+      en: 'The email announces new bank details for payments; always confirm by phone with a number you already know before paying.',
+      de: 'Die E-Mail kündigt eine neue Bankverbindung an; bestätigen Sie das vor jeder Zahlung telefonisch über eine Ihnen bereits bekannte Nummer.'
     },
     'attachment-risky': {
       title: { en: 'Risky attachment', de: 'Riskanter Anhang' },
@@ -1146,7 +1177,7 @@
     // 6. Content signals
     var bodyPlain = mime.text.join('\n') + '\n' + mime.html.map(stripHtml).join('\n');
     var content = (subject + '\n' + bodyPlain).replace(/[ \t]+/g, ' ');
-    ['content-payment', 'content-suspension', 'content-cancellation', 'content-clickfix'].forEach(function (id) {
+    ['content-payment', 'content-suspension', 'content-cancellation', 'content-clickfix', 'content-credentials', 'content-bank-change'].forEach(function (id) {
       var m = CONTENT_PATTERNS[id].exec(content);
       if (m) signals.push(makeSignal(id, '', '', '“' + m[0].trim() + '”'));
     });
@@ -1210,12 +1241,14 @@
 <script>
 (function () {
   'use strict';
-  var EXAMPLE_EMAIL = "Return-Path: \u003cbounce@booking-partnerhub.test>\nReceived: from mx1.grandpalm.test (10.0.0.5) by mail.grandpalm.test (10.0.0.9); Mon, 12 Oct 2026 08:14:03 +0400\nReceived: from smtp.booking-partnerhub.test (smtp.booking-partnerhub.test [203.0.113.24]) by mx1.grandpalm.test with ESMTP id 4f1a; Mon, 12 Oct 2026 08:14:01 +0400\nAuthentication-Results: mx1.grandpalm.test; spf=softfail (domain of transitioning bounce@booking-partnerhub.test does not designate 203.0.113.24 as permitted sender) smtp.mailfrom=booking-partnerhub.test; dkim=none; dmarc=fail (p=NONE) header.from=booking-partnerhub.test\nFrom: \"Booking.com Partner Hub\" \u003cno-reply@booking-partnerhub.test>\nReply-To: billing@payments-desk.test\nTo: reservations@grandpalm.test\nSubject: Urgent: card verification failed for reservation 4471-2209\nDate: Mon, 12 Oct 2026 07:13:55 +0300\nMessage-ID: \u003ca81c2@booking-partnerhub.test>\nMIME-Version: 1.0\nContent-Type: text/html; charset=utf-8\n\n\u003chtml>\u003cbody>\n\u003cp>Dear Partner,\u003c/p>\n\u003cp>The guest's card verification failed for reservation 4471-2209. To avoid losing the booking you must \u003cb>update your payment details\u003c/b> within 24 hours.\u003c/p>\n\u003cp>If we do not receive your confirmation, your account will be suspended.\u003c/p>\n\u003cp>\u003ca href=\"https://booking-partnerhub.test/extranet/verify?id=4471\">Verify payment details\u003c/a>\u003c/p>\n\u003cp>Booking.com Partner Support\u003c/p>\n\u003c/body>\u003c/html>\n";
+  var EXAMPLES = {"ota":"Return-Path: \u003cbounce@booking-partnerhub.test>\nReceived: from mx1.grandpalm.test (10.0.0.5) by mail.grandpalm.test (10.0.0.9); Mon, 12 Oct 2026 08:14:03 +0400\nReceived: from smtp.booking-partnerhub.test (smtp.booking-partnerhub.test [203.0.113.24]) by mx1.grandpalm.test with ESMTP id 4f1a; Mon, 12 Oct 2026 08:14:01 +0400\nAuthentication-Results: mx1.grandpalm.test; spf=softfail (domain of transitioning bounce@booking-partnerhub.test does not designate 203.0.113.24 as permitted sender) smtp.mailfrom=booking-partnerhub.test; dkim=none; dmarc=fail (p=NONE) header.from=booking-partnerhub.test\nFrom: \"Booking.com Partner Hub\" \u003cno-reply@booking-partnerhub.test>\nReply-To: billing@payments-desk.test\nTo: reservations@grandpalm.test\nSubject: Urgent: card verification failed for reservation 4471-2209\nDate: Mon, 12 Oct 2026 07:13:55 +0300\nMessage-ID: \u003ca81c2@booking-partnerhub.test>\nMIME-Version: 1.0\nContent-Type: text/html; charset=utf-8\n\n\u003chtml>\u003cbody>\n\u003cp>Dear Partner,\u003c/p>\n\u003cp>The guest's card verification failed for reservation 4471-2209. To avoid losing the booking you must \u003cb>update your payment details\u003c/b> within 24 hours.\u003c/p>\n\u003cp>If we do not receive your confirmation, your account will be suspended.\u003c/p>\n\u003cp>\u003ca href=\"https://booking-partnerhub.test/extranet/verify?id=4471\">Verify payment details\u003c/a>\u003c/p>\n\u003cp>Booking.com Partner Support\u003c/p>\n\u003c/body>\u003c/html>\n","m365":"Return-Path: \u003cbounce@mailrelay-77.test>\nReceived: from mailrelay-77.test (unknown [198.51.100.45]) by mx1.grandpalm.test with ESMTP id 9a41; Tue, 03 Nov 2026 08:12:40 +0100\nAuthentication-Results: mx1.grandpalm.test; spf=softfail smtp.mailfrom=mailrelay-77.test; dkim=none; dmarc=fail (p=NONE) header.from=micros0ft-365-support.test\nFrom: \"Microsoft 365 Admin\" \u003cno-reply@micros0ft-365-support.test>\nTo: reception@grandpalm.test\nSubject: Action required: your password expires today\nDate: Tue, 03 Nov 2026 08:12:31 +0100\nMessage-ID: \u003ca9a41@micros0ft-365-support.test>\nMIME-Version: 1.0\nContent-Type: text/html; charset=utf-8\n\n\u003chtml>\u003cbody>\n\u003cp>Dear user,\u003c/p>\n\u003cp>Your password expires today. Sign in to keep your current password and avoid losing access to your mailbox.\u003c/p>\n\u003cp>\u003ca href=\"https://m365-verify.example.com/login?u=reception\">https://login.microsoftonline.com/keep-password\u003c/a>\u003c/p>\n\u003cp>Microsoft 365 Security Team\u003c/p>\n\u003c/body>\u003c/html>\n","bank":"Return-Path: \u003coffice@nordwind-supplies.test>\nReceived: from mail.nordwind-supplies.test (mail.nordwind-supplies.test [192.0.2.77]) by mx1.grandpalm.test with ESMTPS id 4c18; Wed, 04 Nov 2026 09:40:11 +0100\nAuthentication-Results: mx1.grandpalm.test; spf=pass smtp.mailfrom=nordwind-supplies.test; dkim=pass header.d=nordwind-supplies.test; dmarc=pass header.from=nordwind-supplies.test\nFrom: \"Petra Lindqvist - Nordwind Supplies\" \u003coffice@nordwind-supplies.test>\nReply-To: \"Petra Lindqvist\" \u003cp.lindqvist.accounts@fastmail-box.test>\nTo: accounts@grandpalm.test\nSubject: Updated bank details for open invoices\nDate: Wed, 04 Nov 2026 09:40:02 +0100\nMessage-ID: \u003cc4c18@nordwind-supplies.test>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=utf-8\n\nHello,\n\nDue to an audit, our bank account has changed. Please update our bank details\nbefore the next payment run and use the new IBAN below for all open invoices:\n\nIBAN: XX00 TEST 0000 0000 0000 00 (synthetic test value)\n\nInvoice NF-2210 is overdue, please pay today to avoid a delivery stop.\nPlease reply only to this email, our phone line is currently down.\n\nKind regards,\nPetra Lindqvist\nAccounts, Nordwind Supplies (fictional)\n"};
 
   var T = {
     en: {
-      title: 'Hotel Phishing Check',
-      subtitle: 'Paste the headers of a suspicious email and see the warning signs in plain language.',
+      title: 'Phishing Check',
+      subtitle: 'Spot fake emails before you click. Paste the headers of a suspicious email and see the warning signs in plain language.',
+      navHere: 'Phishing Check', navOther: 'Domain Email Check: how well is a domain protected against fake senders? →',
+      exOta: 'Example: fake Booking.com payment (hotels / OTAs)', exM365: 'Example: fake Microsoft 365 login', exBank: 'Example: supplier bank-detail change',
       privacy: 'Private by design: this page runs only in your browser. Nothing you paste is sent anywhere or saved — it never leaves this device.',
       headersLabel: 'Email headers',
       headersHint: '(or the full email source — see “How do I get the headers?” below)',
@@ -1230,21 +1263,23 @@
       from: 'From', subject: 'Subject', auth: 'Authentication', hop: 'First external server', none: '—',
       pts: '{n} pts', pt: '{n} pt', infoOnly: 'info',
       empty: 'Please paste the email headers first.',
-      advice: 'If in doubt: do not click links, do not open attachments and do not reply. Check the reservation directly in the OTA extranet (typed in by hand) and forward the email to your IT or security contact.',
+      advice: 'If in doubt: do not click links, do not open attachments and do not reply. Check the request directly with the sender (a website you type in by hand, or a phone number you already know) and forward the email to your IT or security contact.',
       helpTitle: 'How do I get the headers?',
       helpIntro: 'Headers are the technical “envelope” of an email. Copy them and paste them into the first box. If you can copy the full source (all of it), paste that — then links and attachments are checked too.',
       helpOutlook: ['Open the email in its own window (double-click it).', 'Click File → Properties.', 'Copy everything in the “Internet headers” box (click in it, Ctrl+A, Ctrl+C).'],
       helpOwa: ['Open the email.', 'Click … (More actions) → View → View message details.', 'Copy all the text in the window (Ctrl+A, Ctrl+C).'],
       helpGmail: ['Open the email.', 'Click ⋮ (More) next to Reply → Show original.', 'Click “Copy to clipboard” and paste it here. This is the full source, so leave the second box empty.'],
       helpApple: ['Open the email.', 'Choose View → Message → Raw Source (Option+Cmd+U).', 'Copy everything (Cmd+A, Cmd+C) and paste it here.'],
-      settingsTitle: 'Settings: your hotel',
-      settingsIntro: 'Add your hotel’s name and email domain to detect emails that pretend to come from your own hotel or manager. Saved only in this browser.',
-      hotelName: 'Hotel name', hotelDomain: 'Hotel email domain', save: 'Save', saved: 'Saved in this browser.', notSaved: 'Could not save here (private mode?) — the setting works until you close the page.',
+      settingsTitle: 'Settings: your organisation',
+      settingsIntro: 'Add your organisation’s name (for example your hotel or company) and email domain to detect emails that pretend to come from your own organisation or manager. Saved only in this browser.',
+      hotelName: 'Organisation name', hotelDomain: 'Your email domain', save: 'Save', saved: 'Saved in this browser.', notSaved: 'Could not save here (private mode?) — the setting works until you close the page.',
       footer: 'Signals only, not a security product: a result never means that an email is “safe”. Check only emails you are allowed to handle. All examples are synthetic. Explanations in English and German.'
     },
     de: {
-      title: 'Hotel-Phishing-Check',
-      subtitle: 'Fügen Sie die Header einer verdächtigen E-Mail ein und sehen Sie die Warnzeichen in einfacher Sprache.',
+      title: 'Phishing-Check',
+      subtitle: 'Gefälschte E-Mails erkennen, bevor Sie klicken. Fügen Sie die Header einer verdächtigen E-Mail ein und sehen Sie die Warnzeichen in einfacher Sprache.',
+      navHere: 'Phishing-Check', navOther: 'Domain-E-Mail-Check: Wie gut ist eine Domain gegen gefälschte Absender geschützt? →',
+      exOta: 'Beispiel: gefälschte Booking.com-Zahlung (Hotels / OTAs)', exM365: 'Beispiel: gefälschte Microsoft-365-Anmeldung', exBank: 'Beispiel: geänderte Bankverbindung eines Lieferanten',
       privacy: 'Privat by Design: Diese Seite läuft nur in Ihrem Browser. Nichts, was Sie einfügen, wird gesendet oder gespeichert – es verlässt dieses Gerät nie.',
       headersLabel: 'E-Mail-Header',
       headersHint: '(oder der komplette Quelltext – siehe „Wie bekomme ich die Header?“ unten)',
@@ -1259,16 +1294,16 @@
       from: 'Von', subject: 'Betreff', auth: 'Authentifizierung', hop: 'Erster externer Server', none: '—',
       pts: '{n} Pkt.', pt: '{n} Pkt.', infoOnly: 'Info',
       empty: 'Bitte fügen Sie zuerst die E-Mail-Header ein.',
-      advice: 'Im Zweifel: keine Links anklicken, keine Anhänge öffnen und nicht antworten. Prüfen Sie die Reservierung direkt im OTA-Extranet (Adresse selbst eintippen) und leiten Sie die E-Mail an Ihre IT- oder Sicherheitskontaktperson weiter.',
+      advice: 'Im Zweifel: keine Links anklicken, keine Anhänge öffnen und nicht antworten. Prüfen Sie die Anfrage direkt beim Absender (Website selbst eintippen oder eine Ihnen bekannte Telefonnummer) und leiten Sie die E-Mail an Ihre IT- oder Sicherheitskontaktperson weiter.',
       helpTitle: 'Wie bekomme ich die Header?',
       helpIntro: 'Header sind der technische „Umschlag“ einer E-Mail. Kopieren Sie sie in das erste Feld. Wenn Sie den kompletten Quelltext kopieren können, fügen Sie diesen ein – dann werden auch Links und Anhänge geprüft.',
       helpOutlook: ['Öffnen Sie die E-Mail in einem eigenen Fenster (Doppelklick).', 'Klicken Sie auf Datei → Eigenschaften.', 'Kopieren Sie alles im Feld „Internetkopfzeilen“ (hineinklicken, Strg+A, Strg+C).'],
       helpOwa: ['Öffnen Sie die E-Mail.', 'Klicken Sie auf … (Weitere Aktionen) → Ansicht → Nachrichtendetails anzeigen.', 'Kopieren Sie den gesamten Text im Fenster (Strg+A, Strg+C).'],
       helpGmail: ['Öffnen Sie die E-Mail.', 'Klicken Sie neben „Antworten“ auf ⋮ (Mehr) → Original anzeigen.', 'Klicken Sie auf „In die Zwischenablage kopieren“ und fügen Sie es hier ein. Das ist der komplette Quelltext, das zweite Feld bleibt leer.'],
       helpApple: ['Öffnen Sie die E-Mail.', 'Wählen Sie Darstellung → E-Mail → Rohformat (Wahl+Cmd+U).', 'Alles kopieren (Cmd+A, Cmd+C) und hier einfügen.'],
-      settingsTitle: 'Einstellungen: Ihr Hotel',
-      settingsIntro: 'Geben Sie Namen und E-Mail-Domain Ihres Hotels ein, um E-Mails zu erkennen, die vorgeben, von Ihrem Hotel oder Ihrer Direktion zu kommen. Nur in diesem Browser gespeichert.',
-      hotelName: 'Hotelname', hotelDomain: 'E-Mail-Domain des Hotels', save: 'Speichern', saved: 'In diesem Browser gespeichert.', notSaved: 'Speichern nicht möglich (privater Modus?) – die Einstellung gilt, bis Sie die Seite schließen.',
+      settingsTitle: 'Einstellungen: Ihre Organisation',
+      settingsIntro: 'Geben Sie Namen (z. B. Ihr Hotel oder Ihre Firma) und E-Mail-Domain Ihrer Organisation ein, um E-Mails zu erkennen, die vorgeben, von Ihrer eigenen Organisation oder Ihrer Leitung zu kommen. Nur in diesem Browser gespeichert.',
+      hotelName: 'Name der Organisation', hotelDomain: 'Ihre E-Mail-Domain', save: 'Speichern', saved: 'In diesem Browser gespeichert.', notSaved: 'Speichern nicht möglich (privater Modus?) – die Einstellung gilt, bis Sie die Seite schließen.',
       footer: 'Nur Signale, kein Sicherheitsprodukt: Ein Ergebnis bedeutet nie, dass eine E-Mail „sicher“ ist. Prüfen Sie nur E-Mails, die Sie bearbeiten dürfen. Alle Beispiele sind erfunden. Erklärungen auf Englisch und Deutsch.'
     }
   };
@@ -1388,7 +1423,7 @@
     $('lang-de').addEventListener('click', function () { lang = 'de'; save(LANG_KEY, lang); applyLang(); });
     $('check').addEventListener('click', runCheck);
     $('example').addEventListener('click', function () {
-      $('headers').value = EXAMPLE_EMAIL;
+      $('headers').value = EXAMPLES[$('example-set').value] || EXAMPLES.ota;
       $('body').value = '';
       runCheck();
     });

@@ -1,0 +1,130 @@
+{
+ "domain": "pct-hotel.test",
+ "note": "quarantine but pct=25 and sp=none",
+ "answers": {
+  "pct-hotel.test|MX": {
+   "Status": 0,
+   "Question": [
+    {
+     "name": "pct-hotel.test",
+     "type": 15
+    }
+   ],
+   "Answer": [
+    {
+     "name": "pct-hotel.test",
+     "type": 15,
+     "TTL": 300,
+     "data": "10 mx.example.com."
+    }
+   ]
+  },
+  "pct-hotel.test|TXT": {
+   "Status": 0,
+   "Question": [
+    {
+     "name": "pct-hotel.test",
+     "type": 16
+    }
+   ],
+   "Answer": [
+    {
+     "name": "pct-hotel.test",
+     "type": 16,
+     "TTL": 300,
+     "data": "\"v=spf1 mx -all\""
+    }
+   ]
+  },
+  "_dmarc.pct-hotel.test|TXT": {
+   "Status": 0,
+   "Question": [
+    {
+     "name": "_dmarc.pct-hotel.test",
+     "type": 16
+    }
+   ],
+   "Answer": [
+    {
+     "name": "_dmarc.pct-hotel.test",
+     "type": 16,
+     "TTL": 300,
+     "data": "\"v=DMARC1; p=quarantine; pct=25; sp=none; rua=mailto:x@pct-hotel.test\""
+    }
+   ]
+  },
+  "selector1._domainkey.pct-hotel.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "selector1._domainkey.pct-hotel.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  },
+  "selector2._domainkey.pct-hotel.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "selector2._domainkey.pct-hotel.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  },
+  "google._domainkey.pct-hotel.test|TXT": {
+   "Status": 0,
+   "Question": [
+    {
+     "name": "google._domainkey.pct-hotel.test",
+     "type": 16
+    }
+   ],
+   "Answer": [
+    {
+     "name": "google._domainkey.pct-hotel.test",
+     "type": 16,
+     "TTL": 300,
+     "data": "\"v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsynthetic\""
+    }
+   ]
+  },
+  "k1._domainkey.pct-hotel.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "k1._domainkey.pct-hotel.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  },
+  "default._domainkey.pct-hotel.test|TXT": {
+   "Status": 3,
+   "Question": [
+    {
+     "name": "default._domainkey.pct-hotel.test",
+     "type": 16
+    }
+   ],
+   "Authority": []
+  }
+ },
+ "expect": {
+  "verdict": "partial",
+  "findings": [
+   "dmarc-pct",
+   "dmarc-sp-none",
+   "dkim-found"
+  ],
+  "reasons": [
+   "dmarc-pct",
+   "dmarc-sp-none"
+  ],
+  "steps": [
+   "dmarc-pct",
+   "dmarc-sp"
+  ]
+ }
+}
