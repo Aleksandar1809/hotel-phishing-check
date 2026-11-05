@@ -33,7 +33,7 @@ Each check produces a signal with a one-sentence explanation in English and Germ
 1. **Authentication.** Parse the Authentication-Results, Received-SPF and ARC headers to get the SPF, DKIM and DMARC results: pass, fail, softfail, none or missing.
 2. **Sender mismatch.** Compare the domains of From, Reply-To and Return-Path.
 3. **Brand impersonation.** Flag when the display name or subject names one of the brands below, but the From domain is not on the official domain list.
-   - Brands: Booking.com, Expedia, Airbnb, Agoda, Hotels.com, Trip.com, HRS, or the hotel's own name (from settings).
+   - Brands (8): Booking.com, Expedia, Airbnb, Agoda, Hotels.com, Trip.com, HRS, Microsoft 365, plus the hotel's own name (from settings).
    - Keep the official list in one editable array.
 4. **Lookalike domains.** Compare sender and link domains against the official list. Flag:
    - edit distance of 2 or less
@@ -61,8 +61,8 @@ Each check produces a signal with a one-sentence explanation in English and Germ
 
 1. **Core and tests.**
    - Write src/analyzer.js.
-   - Add 12 synthetic emails in tests/emails/:
-     - 8 phishing emails in different styles: fake Booking.com payment request, fake guest complaint with a link, ClickFix, lookalike domain, and others
+   - Add 14 synthetic emails in tests/emails/:
+     - 10 phishing emails in different styles: fake Booking.com payment request, fake guest complaint with a link, ClickFix, lookalike domain, fake Microsoft 365 login, supplier bank-detail change, and others
      - 4 legitimate-looking emails with valid authentication
    - Write tests/run.js, which checks the expected verdict and the key signals for each email.
    - Report the pass rate. Fix the analyzer until all tests pass.
